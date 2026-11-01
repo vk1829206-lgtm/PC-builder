@@ -1,0 +1,403 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RigCrafter India - Custom PC Builder & Part Picker</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              500: '#06b6d4',
+              600: '#0891b2',
+              accent: '#8b5cf6',
+              dark: '#0f172a',
+              card: '#1e293b',
+              border: '#334155'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #06b6d4;
+    }
+    .neon-glow {
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.25);
+    }
+    .neon-border {
+      border: 1px solid rgba(6, 182, 212, 0.4);
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printArea, #printArea * {
+        visibility: visible;
+      }
+      #printArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white !important;
+        color: black !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-cyan-500 selection:text-black">
+
+  <!-- TOP NAVBAR -->
+  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+          <i class="fa-solid fa-microchip text-xl text-white"></i>
+        </div>
+        <div>
+          <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-teal-300 to-purple-400 bg-clip-text text-transparent">RigCrafter</span>
+          <span class="ml-1 text-xs bg-cyan-950 text-cyan-400 border border-cyan-800/80 px-2 py-0.5 rounded-full font-mono uppercase">India (INR ₹)</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-4">
+        <button onclick="openCustomItemModal()" class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-lg font-medium text-sm transition-all shadow-md active:scale-95">
+          <i class="fa-solid fa-plus text-xs"></i>
+          <span>Add Custom Link</span>
+        </button>
+
+        <button onclick="copyBuildSpec()" class="p-2 sm:px-3 sm:py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-sm flex items-center gap-2 transition" title="Copy Specs">
+          <i class="fa-regular fa-copy"></i>
+          <span class="hidden sm:inline">Share Build</span>
+        </button>
+
+        <button onclick="printBuildSummary()" class="p-2 sm:px-3 sm:py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-sm flex items-center gap-2 transition" title="Print/Export">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+          <span class="hidden sm:inline">Invoice</span>
+        </button>
+
+        <button onclick="resetBuild()" class="p-2 text-rose-400 hover:bg-rose-500/10 border border-rose-900/40 rounded-lg text-sm" title="Clear Build">
+          <i class="fa-solid fa-rotate-right"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT COLUMN: Component Slots (8 Cols) -->
+    <div class="lg:col-span-8 space-y-4">
+
+      <!-- Header with quick stats -->
+      <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 class="text-xl font-bold text-white flex items-center gap-2">
+            <span>Custom PC Builder</span>
+            <span class="text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-2 py-0.5 rounded-full">
+              Live Compatibility On
+            </span>
+          </h1>
+          <p class="text-xs text-slate-400 mt-1">Amazon, Flipkart, MDComputers ya Vedant se components chuno ya direct product link paste karo.</p>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <span id="selectedCountBadge" class="text-xs bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 font-medium">
+            0 / 9 Parts Selected
+          </span>
+        </div>
+      </div>
+
+      <!-- Component Slots Container -->
+      <div id="slotsContainer" class="space-y-3">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Rig Summary, Compatibility, Price breakdown (4 Cols) -->
+    <div class="lg:col-span-4 space-y-5">
+
+      <!-- TOTAL PRICE CARD -->
+      <div class="bg-gradient-to-b from-slate-900 to-slate-900/80 rounded-2xl border border-slate-800 p-5 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Build Estimated Cost</span>
+          <span class="text-xs text-cyan-400 font-mono">INR (₹)</span>
+        </div>
+        <div class="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 font-mono" id="totalPriceDisplay">
+          ₹0
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+          <span>Taxes (GST 18%):</span>
+          <span class="text-slate-200">Included in listed MRP</span>
+        </div>
+      </div>
+
+      <!-- POWER & COMPATIBILITY MONITOR -->
+      <div class="bg-slate-900/90 rounded-2xl border border-slate-800 p-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold text-sm text-slate-200 flex items-center gap-2">
+            <i class="fa-solid fa-bolt text-amber-400"></i>
+            Estimated Wattage
+          </h3>
+          <span class="text-sm font-bold text-amber-400 font-mono" id="wattageDisplay">0W</span>
+        </div>
+
+        <!-- Wattage Bar -->
+        <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+          <div id="wattageBar" class="bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500 h-2.5 rounded-full transition-all duration-500" style="width: 5%"></div>
+        </div>
+
+        <p class="text-xs text-slate-400" id="psuRecommendation">
+          Recommended PSU: <span class="text-slate-200 font-medium">None yet</span>
+        </p>
+
+        <!-- Compatibility Status Box -->
+        <div id="compatibilityBox" class="p-3 rounded-xl bg-slate-800/60 border border-slate-700/80 flex items-start gap-3">
+          <div id="compatIcon" class="mt-0.5 text-emerald-400">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div>
+            <div id="compatTitle" class="text-xs font-bold text-slate-200">System Ready</div>
+            <p id="compatDesc" class="text-xs text-slate-400 mt-0.5">Component chuniye, automatic compatibility check active hai.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- STORE BREAKDOWN -->
+      <div class="bg-slate-900/90 rounded-2xl border border-slate-800 p-5 space-y-3">
+        <h3 class="font-semibold text-sm text-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-store text-cyan-400"></i>
+          Store-wise Expense Breakdown
+        </h3>
+        
+        <div id="storeBreakdownList" class="space-y-2 text-xs">
+          <div class="text-slate-500 italic">No components added yet.</div>
+        </div>
+      </div>
+
+      <!-- QUICK TIPS -->
+      <div class="p-4 rounded-xl bg-cyan-950/20 border border-cyan-800/40 text-xs text-cyan-300/80 leading-relaxed space-y-1">
+        <p class="font-semibold text-cyan-300 flex items-center gap-1.5">
+          <i class="fa-solid fa-lightbulb"></i> Pro Tip for Indian PC Buyers:
+        </p>
+        <p>Amazon aur Flipkart ke prices dynamic hote hain. Aap "Add Custom Link" daba kar live sales aur discounts ka exact price manually likh kar calculate kar sakte hain.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mt-auto border-t border-slate-900 bg-slate-950/80 py-4 text-center text-xs text-slate-500">
+    Designed for Indian Gamers & Tech Enthusiasts &bull; RigCrafter &copy; 2026 &bull; Real-time INR (₹) Estimator
+  </footer>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- 1. COMPONENT SELECTOR MODAL (Catalog) -->
+  <div id="catalogModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-3xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+      <!-- Modal Header -->
+      <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div id="modalSlotIcon" class="h-9 w-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+            <i class="fa-solid fa-microchip"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-white text-base" id="modalSlotTitle">Select Component</h3>
+            <p class="text-xs text-slate-400">Popular parts readily available on Amazon & Flipkart in India</p>
+          </div>
+        </div>
+        <button onclick="closeCatalogModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="p-4 border-b border-slate-800 bg-slate-900/60 flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-1">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-500 text-xs"></i>
+          <input type="text" id="catalogSearch" oninput="filterCatalog()" placeholder="Search model, brand or specs (e.g. Ryzen 5600, RTX 4060)..." class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-4 py-2 text-xs text-white focus:outline-none focus:border-cyan-500 placeholder-slate-500">
+        </div>
+        <select id="catalogStoreFilter" onchange="filterCatalog()" class="bg-slate-950 border border-slate-800 text-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-cyan-500">
+          <option value="ALL">All Stores (Amazon / Flipkart / MD)</option>
+          <option value="Amazon India">Amazon.in Only</option>
+          <option value="Flipkart">Flipkart Only</option>
+          <option value="MDComputers">MDComputers</option>
+          <option value="Vedant">Vedant Computers</option>
+        </select>
+      </div>
+
+      <!-- Catalog List -->
+      <div id="catalogList" class="p-4 overflow-y-auto space-y-3 flex-1">
+        <!-- Rendered with JS -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-3 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+        <span>Can't find your item?</span>
+        <button onclick="switchToCustomFromCatalog()" class="text-cyan-400 hover:text-cyan-300 font-medium">
+          + Add custom product link or title
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. CUSTOM COMPONENT / LINK MODAL -->
+  <div id="customModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl shadow-2xl p-5 flex flex-col space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-link text-purple-400"></i>
+          <h3 class="font-bold text-white text-base">Add Custom Component / URL</h3>
+        </div>
+        <button onclick="closeCustomModal()" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-400">Amazon, Flipkart ya local shop se component details aur live price yahan enter karein:</p>
+
+      <form id="customComponentForm" onsubmit="handleCustomSubmit(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Select Component Category *</label>
+          <select id="customCategory" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
+            <option value="cpu">Processor (CPU)</option>
+            <option value="motherboard">Motherboard</option>
+            <option value="ram">RAM Memory</option>
+            <option value="storage">Storage (SSD/HDD)</option>
+            <option value="gpu">Graphics Card (GPU)</option>
+            <option value="psu">Power Supply (PSU)</option>
+            <option value="case">Cabinet / Case</option>
+            <option value="cooler">CPU Cooler</option>
+            <option value="monitor">Monitor / Peripherals</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Product Title / Name *</label>
+          <input type="text" id="customName" required placeholder="e.g. Gigabyte B550M DS3H AC WiFi Motherboard" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Price in INR (₹) *</label>
+            <input type="number" id="customPrice" required min="1" placeholder="9450" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Store / Website *</label>
+            <select id="customStore" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
+              <option value="Amazon India">Amazon India</option>
+              <option value="Flipkart">Flipkart</option>
+              <option value="MDComputers">MDComputers</option>
+              <option value="Vedant">Vedant Computers</option>
+              <option value="Local Store / Other">Local Store / Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Product Page URL (Amazon/Flipkart Link - Optional)</label>
+          <input type="url" id="customUrl" placeholder="https://www.flipkart.com/item/..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500 font-mono">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Estimated Wattage (W)</label>
+            <input type="number" id="customWattage" placeholder="e.g. 65" min="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Socket / Type (Specs)</label>
+            <input type="text" id="customSpecs" placeholder="e.g. AM4, DDR4, 650W" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
+          </div>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeCustomModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-semibold">Add to Build</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- PRINTABLE BILL INVOICE CONTAINER (Hidden until print or preview) -->
+  <div id="printArea" class="hidden">
+    <div class="p-8 max-w-4xl mx-auto bg-white text-slate-900">
+      <div class="border-b pb-4 mb-4 flex justify-between items-center">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900">RigCrafter India - Build Quotation</h1>
+          <p class="text-sm text-slate-500">Custom Gaming/Workstation PC Specification & Cost Sheet</p>
+        </div>
+        <div class="text-right">
+          <div class="text-sm font-semibold" id="printDate"></div>
+          <div class="text-xs text-slate-400">All prices in Indian Rupee (INR ₹)</div>
+        </div>
+      </div>
+
+      <table class="w-full text-left text-sm border-collapse mb-6">
+        <thead>
+          <tr class="border-b-2 border-slate-300 bg-slate-100">
+            <th class="p-2 font-bold">Category</th>
+            <th class="p-2 font-bold">Component Name</th>
+            <th class="p-2 font-bold">Store</th>
+            <th class="p-2 font-bold text-right">Price (₹)</th>
+          </tr>
+        </thead>
+        <tbody id="printTableBody">
+          <!-- Populated dynamically -->
+        </tbody>
+      </table>
+
+      <div class="flex justify-between items-start border-t pt-4">
+        <div>
+          <p class="text-xs text-slate-600">Generated on RigCrafter Custom PC Builder.</p>
+          <p class="text-xs text-slate-600" id="printWattageNote"></p>
+        </div>
+        <div class="text-right">
+          <p class="text-sm text-slate-600">Grand Total Amount:</p>
+          <h2 class="text-2xl font-black text-slate-900" id="printTotalAmount">₹0</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // Component category definition with icons and labels
+    const CATEGORIES = [
+      { id: 'cpu', name: 'Processor (CPU)', icon: 'fa-solid fa-microchip', placeholder: 'Choose AMD Ryzen or Intel Core' },
+      { id: 'motherboard', name: 'Motherboard', icon: 'fa-solid fa-chess-board', placeholder: 'Choose compatible motherboard' },
+      { id: 'ram', name: 'Memory (RAM)', icon: 'fa-solid fa-memory', placeholder: 'Choose DDR4 or DDR5 RAM' },
+      { id: 'storage', name: 'Storage (SSD/HDD)', icon: 'fa-solid fa-hard-drive', placeholder: 'Choose NVMe M.2 or SATA SSD' },
+      { id: 'gpu', name: 'Graphics Card (GPU)', icon: 'fa-solid fa-gamepad', placeholder: 'Choose Nvidia GeForce or AMD Radeon' },
+      { id: 'psu', name: 'Power Supply (PSU)', icon: 'fa-solid fa-bolt', placeholder: 'Choose 80+ certified PSU' },
+      { id: 'case', name: 'Cabinet / Case', icon: 'fa-solid fa-box', placeholder: 'Choose airflow cabinet' },
+      { id: 'cooler', name: 'CPU Cooler', icon: 'fa-solid fa-fan', placeholder: 'Stock cooler or AIO/Air cooler' },
+      { id: 'monitor', name: 'Monitor / Display', icon:
