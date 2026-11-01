@@ -1,356 +1,359 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RigCrafter India - Custom PC Builder</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      background-color: #0b0f19;
-      color: #e2e8f0;
-      font-family: system-ui, -apple-system, sans-serif;
-    }
-    .glass-card {
-      background: rgba(17, 24, 39, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 1rem;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RigCrafter India - Custom PC Builder</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+  body { background: #0b0f19; color: #e2e8f0; padding-bottom: 60px; }
+  .nav { background: #111827; border-bottom: 1px solid #1f2937; padding: 12px 16px; position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
+  .logo { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
+  .badge { font-size: 11px; background: #083344; color: #67e8f9; padding: 2px 8px; border-radius: 99px; border: 1px solid #155e75; }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  button { cursor: pointer; border: none; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 600; color: #fff; background: #1f2937; border: 1px solid #374151; }
+  .btn-primary { background: #4f46e5; border-color: #6366f1; }
+  .container { max-width: 1100px; margin: 20px auto; padding: 0 14px; display: grid; grid-template-columns: 1fr; gap: 16px; }
+  @media (min-width: 850px) { .container { grid-template-columns: 2fr 1fr; } }
+  .card { background: #111827; border: 1px solid #1f2937; border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+  .slot-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
+  .slot-title { font-size: 15px; font-weight: 700; color: #fff; }
+  .slot-price { font-size: 15px; font-weight: 800; color: #34d399; }
+  .row { display: flex; gap: 8px; flex-direction: column; }
+  @media (min-width: 550px) { .row { flex-direction: row; } }
+  select, input { width: 100%; background: #0b0f19; color: #f8fafc; border: 1px solid #334155; border-radius: 10px; padding: 10px; font-size: 13px; }
+  .total-num { font-size: 36px; font-weight: 900; color: #34d399; margin: 8px 0; }
+  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 50; align-items: center; justify-content: center; padding: 16px; }
+  .modal.open { display: flex; }
+  .modal-box { background: #111827; border: 1px solid #374151; border-radius: 16px; width: 100%; max-width: 420px; padding: 18px; }
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+  .buy-link { font-size: 12px; color: #38bdf8; text-decoration: none; margin-left: 8px; }
+</style>
 </head>
-<body class="min-h-screen pb-16">
+<body>
 
-  <!-- Top Navbar -->
-  <header class="sticky top-0 z-30 bg-[#0b0f19]/95 backdrop-blur border-b border-slate-800 px-4 py-3">
-    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-400 font-bold text-lg">
-          ⚡
-        </div>
+<div class="nav">
+  <div class="logo">⚡ RigCrafter <span class="badge">INDIA (INR ₹)</span></div>
+  <div class="btns">
+    <button class="btn-primary" onclick="openModal('cpu')">+ Add Flipkart/Amazon Link</button>
+    <button onclick="copyBuild()">📋 Copy Build</button>
+    <button onclick="window.print()">🖨️ Bill</button>
+    <button onclick="resetAll()">↻ Reset</button>
+  </div>
+</div>
+
+<div class="container">
+  <!-- LEFT: HARDCODED PC SLOTS (Humesha Dikhenge!) -->
+  <div>
+    <div class="card">
+      <div class="slot-head">
         <div>
-          <span class="font-bold text-lg text-white tracking-tight">RigCrafter</span>
-          <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800">INDIA (INR ₹)</span>
+          <div class="slot-title" style="font-size:18px;">Custom PC Builder <span class="badge" style="background:#064e3b;color:#6ee7b7;">Live Price & Wattage</span></div>
+          <p style="font-size:12px;color:#94a3b8;margin-top:4px;">Niche diye gaye boxes se PC parts chunein ya '+ Paste Link' daba kar Flipkart/Amazon se add karein.</p>
         </div>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <button onclick="openCustomModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl transition">
-          + Add Custom Link
-        </button>
-        <button onclick="shareBuild()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-700">
-          📋 Copy Build
-        </button>
-        <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-700">
-          🖨️ Bill
-        </button>
-        <button onclick="resetBuild()" title="Reset" class="bg-rose-950/60 hover:bg-rose-900/70 text-rose-300 text-xs sm:text-sm px-3 py-2 rounded-xl border border-rose-800/50">
-          ↻
-        </button>
+        <span id="part-counter" class="badge">0 / 9 Selected</span>
       </div>
     </div>
-  </header>
 
-  <!-- Main Content -->
-  <main class="max-w-6xl mx-auto px-4 mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-    
-    <!-- Left / Top Section: PC Component Slots -->
-    <div class="lg:col-span-2 space-y-4">
-      <div class="glass-card p-5 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-xl font-bold text-white">Custom PC Builder</h1>
-            <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">Live Compatibility On</span>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-400 mt-1">
-            Amazon, Flipkart, MDComputers se parts chunein ya seedha kisi bhi website ka product link paste karein.
-          </p>
-        </div>
-        <div id="parts-count-badge" class="text-xs font-medium px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-300">
-          0 / 9 Parts Selected
-        </div>
+    <!-- 1. CPU -->
+    <div class="card" id="card-cpu">
+      <div class="slot-head">
+        <span class="slot-title">🧠 1. Processor (CPU)</span>
+        <div><span class="slot-price" id="price-cpu">₹0</span><a id="link-cpu" class="buy-link" target="_blank"></a></div>
       </div>
-
-      <!-- Component Slots Container -->
-      <div id="slots-container" class="space-y-3"></div>
-    </div>
-
-    <!-- Right / Bottom Section: Price & Wattage Summary -->
-    <div class="space-y-4">
-      <!-- Total Price Card -->
-      <div class="glass-card p-5">
-        <div class="flex items-center justify-between text-xs uppercase tracking-wider text-slate-400">
-          <span>Total Build Estimated Cost</span>
-          <span class="text-cyan-400 font-semibold">INR (₹)</span>
-        </div>
-        <div id="grand-total" class="text-4xl font-extrabold text-emerald-400 mt-2">₹0</div>
-        <div class="flex justify-between text-xs text-slate-400 mt-4 pt-3 border-t border-slate-800">
-          <span>Taxes (GST 18%):</span>
-          <span class="text-slate-300">Included in listed MRP</span>
-        </div>
-      </div>
-
-      <!-- Wattage & Compatibility Card -->
-      <div class="glass-card p-5 space-y-3">
-        <div class="flex items-center justify-between">
-          <span class="text-sm font-semibold text-white">⚡ Estimated Wattage</span>
-          <span id="total-wattage" class="text-sm font-bold text-amber-400">0W</span>
-        </div>
-        <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-          <div id="wattage-bar" class="h-full bg-gradient-to-r from-emerald-400 via-amber-400 to-rose-500 transition-all duration-300" style="width: 5%"></div>
-        </div>
-        <div id="psu-recommend" class="text-xs text-slate-400">Recommended PSU: None yet</div>
-
-        <div id="compat-box" class="p-3 rounded-xl bg-emerald-950/40 border border-emerald-800/60 text-xs text-emerald-300">
-          <div class="font-semibold">✔ System Ready</div>
-          <div id="compat-msg" class="text-slate-400 mt-0.5">Component chuniye, automatic socket aur RAM compatibility check active hai.</div>
-        </div>
-      </div>
-
-      <!-- Store-wise Expense Breakdown -->
-      <div class="glass-card p-5">
-        <h3 class="text-sm font-semibold text-white mb-3">🏪 Store-wise Expense Breakdown</h3>
-        <div id="store-breakdown" class="space-y-2 text-xs text-slate-400">
-          No components added yet.
-        </div>
+      <div class="row">
+        <select id="sel-cpu" onchange="calc()">
+          <option value="0" data-w="0">-- Processor (CPU) Chunein --</option>
+          <option value="12199" data-w="65" data-s="Amazon" data-u="https://www.amazon.in/s?k=AMD+Ryzen+5+5600GT">AMD Ryzen 5 5600GT (6 Core, Radeon Graphics) — ₹12,199 (Amazon)</option>
+          <option value="13499" data-w="65" data-s="Flipkart" data-u="https://www.flipkart.com/search?q=AMD+Ryzen+5+5600X">AMD Ryzen 5 5600X (6 Core, 12 Thread) — ₹13,499 (Flipkart)</option>
+          <option value="9899" data-w="65" data-s="Amazon" data-u="https://www.amazon.in/s?k=Intel+Core+i5+12400F">Intel Core i5-12400F (12th Gen) — ₹9,899 (Amazon)</option>
+          <option value="19499" data-w="105" data-s="MDComputers" data-u="https://mdcomputers.in/?route=product/search&search=Ryzen+5+7600X">AMD Ryzen 5 7600X (AM5) — ₹19,499 (MDComputers)</option>
+          <option value="17999" data-w="65" data-s="Amazon" data-u="https://www.amazon.in/s?k=Intel+Core+i5+14400F">Intel Core i5-14400F (14th Gen) — ₹17,999 (Amazon)</option>
+        </select>
+        <button onclick="openModal('cpu')">+ Paste Link</button>
       </div>
     </div>
-  </main>
 
-  <!-- Custom Link Modal -->
-  <div id="custom-modal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass-card w-full max-w-md p-5 space-y-4 border border-slate-700">
-      <div class="flex items-center justify-between">
-        <h2 class="text-base font-bold text-white">🔗 Add Product from Any Website</h2>
-        <button onclick="closeCustomModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
+    <!-- 2. Motherboard -->
+    <div class="card">
+      <div class="slot-head">
+        <span class="slot-title">🎛️ 2. Motherboard</span>
+        <div><span class="slot-price" id="price-mobo">₹0</span><a id="link-mobo" class="buy-link" target="_blank"></a></div>
       </div>
-
-      <div class="space-y-3 text-xs sm:text-sm">
-        <div>
-          <label class="block text-slate-400 mb-1">1. Category Chunein</label>
-          <select id="custom-cat" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white"></select>
-        </div>
-
-        <div>
-          <label class="block text-slate-400 mb-1">2. Flipkart / Amazon Product Link (URL)</label>
-          <input id="custom-url" type="url" oninput="autoDetectFromUrl()" placeholder="https://www.amazon.in/... ya flipkart.com/..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white" />
-          <p class="text-[11px] text-cyan-400 mt-1">💡 Link paste karte hi naam aur store apne aap fill ho jayega!</p>
-        </div>
-
-        <div>
-          <label class="block text-slate-400 mb-1">3. Component ka Naam</label>
-          <input id="custom-name" type="text" placeholder="e.g. AMD Ryzen 5 5600GT Processor" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white" />
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-slate-400 mb-1">4. Price (₹ INR)</label>
-            <input id="custom-price" type="number" placeholder="e.g. 12499" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white" />
-          </div>
-          <div>
-            <label class="block text-slate-400 mb-1">5. Store Name</label>
-            <select id="custom-store" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
-              <option value="Amazon">Amazon</option>
-              <option value="Flipkart">Flipkart</option>
-              <option value="MDComputers">MDComputers</option>
-              <option value="Vedant">Vedant</option>
-              <option value="Other Store">Other Store</option>
-            </select>
-          </div>
-        </div>
+      <div class="row">
+        <select id="sel-mobo" onchange="calc()">
+          <option value="0" data-w="0">-- Motherboard Chunein --</option>
+          <option value="12899" data-w="35" data-s="Amazon" data-u="https://www.amazon.in/s?k=Gigabyte+B550+AORUS+Elite+V2">Gigabyte B550 AORUS Elite V2 (AM4, DDR4) — ₹12,899 (Amazon)</option>
+          <option value="9499" data-w="30" data-s="Flipkart" data-u="https://www.flipkart.com/search?q=MSI+B550M+PRO-VDH+WiFi">MSI B550M PRO-VDH WiFi (AM4) — ₹9,499 (Flipkart)</option>
+          <option value="10999" data-w="35" data-s="Amazon" data-u="https://www.amazon.in/s?k=ASUS+Prime+B660M-A+D4">ASUS Prime B660M-A D4 (Intel LGA1700) — ₹10,999 (Amazon)</option>
+          <option value="14999" data-w="40" data-s="Vedant" data-u="https://www.vedantcomputers.com">MSI PRO B650M-A WiFi (AM5, DDR5) — ₹14,999 (Vedant)</option>
+        </select>
+        <button onclick="openModal('mobo')">+ Paste Link</button>
       </div>
+    </div>
 
-      <div class="flex justify-end gap-2 pt-2">
-        <button onclick="closeCustomModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs sm:text-sm">Cancel</button>
-        <button onclick="saveCustomPart()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs sm:text-sm">Add to PC Build</button>
+    <!-- 3. RAM -->
+    <div class="card">
+      <div class="slot-head">
+        <span class="slot-title">⚡ 3. Memory (RAM)</span>
+        <div><span class="slot-price" id="price-ram">₹0</span><a id="link-ram" class="buy-link" target="_blank"></a></div>
+      </div>
+      <div class="row">
+        <select id="sel-ram" onchange="calc()">
+          <option value="0" data-w="0">-- Memory (RAM) Chunein --</option>
+          <option value="3499" data-w="10" data-s="Amazon" data-u="https://www.amazon.in/s?k=Corsair+Vengeance+LPX+16GB+DDR4">Corsair Vengeance LPX 16GB (2x8GB) DDR4 3200MHz — ₹3,499 (Amazon)</option>
+          <option value="1699" data-w="6" data-s="Flipkart" data-u="https://www.flipkart.com/search?q=XPG+GAMMIX+D30+8GB">XPG ADATA GAMMIX D30 8GB DDR4 3200MHz — ₹1,699 (Flipkart)</option>
+          <option value="4799" data-w="12" data-s="Amazon" data-u="https://www.amazon.in/s?k=G.Skill+Ripjaws+16GB+DDR5">G.Skill Ripjaws S5 16GB DDR5 5200MHz — ₹4,799 (Amazon)</option>
+        </select>
+        <button onclick="openModal('ram')">+ Paste Link</button>
+      </div>
+    </div>
+
+    <!-- 4. Storage -->
+    <div class="card">
+      <div class="slot-head">
+        <span class="slot-title">💾 4. Storage (SSD / HDD)</span>
+        <div><span class="slot-price" id="price-ssd">₹0</span><a id="link-ssd" class="buy-link" target="_blank"></a></div>
+      </div>
+      <div class="row">
+        <select id="sel-ssd" onchange="calc()">
+          <option value="0" data-w="0">-- SSD / Storage Chunein --</option>
+          <option value="5699" data-w="8" data-s="Amazon" data-u="https://www.amazon.in/s?k=WD+Blue+SN580+1TB">WD Blue SN580 1TB NVMe PCIe Gen4 SSD — ₹5,699 (Amazon)</option>
+          <option value="3399" data-w="8" data-s="Flipkart" data-u="https://www.flipkart.com/search?q=Crucial+P3+Plus+500GB">Crucial P3 Plus 500GB Gen4 NVMe SSD — ₹3,399 (Flipkart)</option>
+          <option value="5199" data-w="8" data-s="Amazon" data-u="https://www.amazon.in/s?k=Kingston+NV2+1TB">Kingston NV2 1TB M.2 NVMe SSD — ₹5,199 (Amazon)</option>
+        </select>
+        <button onclick="openModal('ssd')">+ Paste Link</button>
+      </div>
+    </div>
+
+    <!-- 5. GPU -->
+    <div class="card">
+      <div class="slot-head">
+        <span class="slot-title">🎮 5. Graphics Card (GPU)</span>
+        <div><span class="slot-price" id="price-gpu">₹0</span><a id="link-gpu" class="buy-link" target="_blank"></a></div>
+      </div>
+      <div class="row">
+        <select id="sel-gpu" onchange="calc()">
+          <option value="0" data-w="0">-- Graphics Card (GPU) Chunein --</option>
+          <option value="0" data-w="0" data-s="Built-in" data-u="">Use CPU Integrated Graphics (₹0)</option>
+          <option value="19899" data-w="132" data-s="Amazon" data-u="https://www.amazon.in/s?k=RX+6600+8GB">AMD Radeon RX 6600 8GB GDDR6 — ₹19,899 (Amazon)</option>
+          <option value="24999" data-w="170" data-s="Flipkart" data-u="https://www.flipkart.com/search?q=RTX+3060+12GB">NVIDIA GeForce RTX 3060 12GB — ₹24,999 (Flipkart)</option>
+          <option value="27999" data-w="115" data-s="Amazon" data-u="https://www.amazon.in/s?k=RTX+4060+8GB">NVIDIA GeForce RTX 4060 8GB — ₹27,999 (Amazon)</option>
+        </select>
+        <button onclick="openModal('gpu')">+ Paste Link</button>
+      </div>
+    </div>
+
+    <!-- 6. Power Supply -->
+    <div class="card">
+      <div class="slot-head">
+        <span class="slot-title">🔌 6. Power Supply (PSU)</span>
+        <div><span class="slot-price" id="price-psu">₹0</span><a id="link-psu" class="buy-link" target="_blank"></a></div>
+      </div>
+      <div class="row">
+        <select id="sel-psu" onchange="calc()">
+          <option value="0" data-w="0">-- Power Supply (PSU) Chunein --</option>
+          <option value="3599" data-w="0" data-s="Amazon" data-u="https://www.amazon.in/s?k=Deepcool+PK550D">Deepcool PK550D 550W 80+ Bronze — ₹3,599 (Amazon)</option>
+          <option value="5199" data-w="0" data-s="Flipkart" data-u="https://www.flipkart.com/search?q=Cooler+Master+MWE+650W">Cooler Master MWE 650W V2 80+ Bronze — ₹5,199 (Flipkart)</option>
+          <option value="8999" data-w="0" data-s="Amazon" data-u="https://www.amazon.in/s?k=Corsair+RM750e">Corsair RM750e 750W 80+ Gold Modular — ₹8,999 (Amazon)</option>
+        </select>
+        <button onclick="openModal('psu')">+ Paste Link</button>
+      </div>
+    </div>
+
+    <!-- 7. Cabinet -->
+    <div class="card">
+      <div class="slot-head">
+        <span class="slot-title">🖥️ 7. Cabinet (Case)</span>
+        <div><span class="slot-price" id="price-cab">₹0</span><a id="link-cab" class="buy-link" target="_blank"></a></div>
+      </div>
+      <div class="row">
+        <select id="sel-cab" onchange="calc()">
+          <option value="0" data-w="0">-- Gaming Cabinet Chunein --</option>
+          <option value="3199" data-w="10" data-s="Amazon" data-u="https://www.amazon.in/s?k=Ant+Esports+ICE+112">Ant Esports ICE-112 Mid-Tower Mesh Case — ₹3,199 (Amazon)</option>
+          <option value="3799" data-w="15" data-s="Flipkart" data-u="https://www.flipkart.com/search?q=Galax+Revolution+05">Galax Revolution 05 (4 RGB Fans) — ₹3,799 (Flipkart)</option>
+          <option value="2699" data-w="10" data-s="Amazon" data-u="https://www.amazon.in/s?k=Zebronics+Gaming+Cabinet">Zebronics Tempered Glass Gaming Case — ₹2,699 (Amazon)</option>
+        </select>
+        <button onclick="openModal('cab')">+ Paste Link</button>
+      </div>
+    </div>
+
+    <!-- 8. Cooler -->
+    <div class="card">
+      <div class="slot-head">
+        <span class="slot-title">❄️ 8. CPU Cooler</span>
+        <div><span class="slot-price" id="price-cool">₹0</span><a id="link-cool" class="buy-link" target="_blank"></a></div>
+      </div>
+      <div class="row">
+        <select id="sel-cool" onchange="calc()">
+          <option value="0" data-w="0">-- CPU Cooler Chunein --</option>
+          <option value="0" data-w="5" data-s="Built-in" data-u="">Box Stock Cooler (Included with CPU) — ₹0</option>
+          <option value="1899" data-w="10" data-s="Amazon" data-u="https://www.amazon.in/s?k=Deepcool+AG400">Deepcool AG400 Tower Air Cooler — ₹1,899 (Amazon)</option>
+          <option value="5999" data-w="20" data-s="Flipkart" data-u="https://www.flipkart.com/search?q=Cooler+Master+ML240L">Cooler Master ML240L ARGB Liquid Cooler — ₹5,999 (Flipkart)</option>
+        </select>
+        <button onclick="openModal('cool')">+ Paste Link</button>
+      </div>
+    </div>
+
+    <!-- 9. Monitor -->
+    <div class="card">
+      <div class="slot-head">
+        <span class="slot-title">📺 9. Monitor</span>
+        <div><span class="slot-price" id="price-mon">₹0</span><a id="link-mon" class="buy-link" target="_blank"></a></div>
+      </div>
+      <div class="row">
+        <select id="sel-mon" onchange="calc()">
+          <option value="0" data-w="0">-- Monitor Chunein --</option>
+          <option value="10499" data-w="30" data-s="Amazon" data-u="https://www.amazon.in/s?k=LG+Ultragear+24+inch">LG Ultragear 24" 180Hz IPS Gaming Monitor — ₹10,499 (Amazon)</option>
+          <option value="8999" data-w="28" data-s="Flipkart" data-u="https://www.flipkart.com/search?q=Acer+Nitro+VG240Y">Acer Nitro 23.8" 180Hz IPS Monitor — ₹8,999 (Flipkart)</option>
+          <option value="7499" data-w="25" data-s="Amazon" data-u="https://www.amazon.in/s?k=Samsung+24+inch+IPS+Monitor">Samsung 24" FHD IPS Borderless Monitor — ₹7,499 (Amazon)</option>
+        </select>
+        <button onclick="openModal('mon')">+ Paste Link</button>
       </div>
     </div>
   </div>
 
-  <script>
-    const CATEGORIES = [
-      { id: 'cpu', name: 'Processor (CPU)', icon: '🧠' },
-      { id: 'mobo', name: 'Motherboard', icon: '🎛️' },
-      { id: 'ram', name: 'Memory (RAM)', icon: '⚡' },
-      { id: 'storage', name: 'Storage (NVMe SSD / HDD)', icon: '💾' },
-      { id: 'gpu', name: 'Graphics Card (GPU)', icon: '🎮' },
-      { id: 'psu', name: 'Power Supply (PSU)', icon: '🔌' },
-      { id: 'cabinet', name: 'Cabinet (Case)', icon: '🖥️' },
-      { id: 'cooler', name: 'CPU Cooler', icon: '❄️' },
-      { id: 'monitor', name: 'Monitor', icon: '📺' }
-    ];
+  <!-- RIGHT: SUMMARY -->
+  <div>
+    <div class="card">
+      <div style="font-size:12px;color:#94a3b8;text-transform:uppercase;">Total Build Estimated Cost</div>
+      <div class="total-num" id="grand-total">₹0</div>
+      <div style="font-size:12px;color:#64748b;">Taxes (18% GST): Included in MRP</div>
+    </div>
 
-    const CATALOG = {
-      cpu: [
-        { name: 'AMD Ryzen 5 5600GT (6 Core, Radeon Graphics)', price: 12199, store: 'Amazon', watts: 65, socket: 'AM4', url: 'https://www.amazon.in/s?k=AMD+Ryzen+5+5600GT' },
-        { name: 'AMD Ryzen 5 5600X (6 Core, 12 Thread)', price: 13499, store: 'Flipkart', watts: 65, socket: 'AM4', url: 'https://www.flipkart.com/search?q=AMD+Ryzen+5+5600X' },
-        { name: 'Intel Core i5-12400F (12th Gen, 6 Core)', price: 9899, store: 'Amazon', watts: 65, socket: 'LGA1700', url: 'https://www.amazon.in/s?k=Intel+Core+i5+12400F' },
-        { name: 'AMD Ryzen 5 7600X (AM5, DDR5)', price: 19499, store: 'MDComputers', watts: 105, socket: 'AM5', url: 'https://mdcomputers.in/?route=product/search&search=Ryzen+5+7600X' },
-        { name: 'Intel Core i5-14400F (14th Gen, 10 Core)', price: 17999, store: 'Amazon', watts: 65, socket: 'LGA1700', url: 'https://www.amazon.in/s?k=Intel+Core+i5+14400F' }
-      ],
-      mobo: [
-        { name: 'Gigabyte B550 AORUS Elite V2 (AM4, DDR4)', price: 12899, store: 'Amazon', watts: 35, socket: 'AM4', ramType: 'DDR4', url: 'https://www.amazon.in/s?k=Gigabyte+B550+AORUS+Elite+V2' },
-        { name: 'MSI B550M PRO-VDH WiFi (AM4, DDR4)', price: 9499, store: 'Flipkart', watts: 30, socket: 'AM4', ramType: 'DDR4', url: 'https://www.flipkart.com/search?q=MSI+B550M+PRO-VDH+WiFi' },
-        { name: 'ASUS Prime B660M-A D4 (Intel LGA1700, DDR4)', price: 10999, store: 'Amazon', watts: 35, socket: 'LGA1700', ramType: 'DDR4', url: 'https://www.amazon.in/s?k=ASUS+Prime+B660M-A+D4' },
-        { name: 'MSI PRO B650M-A WiFi (AM5, DDR5)', price: 14999, store: 'Vedant', watts: 40, socket: 'AM5', ramType: 'DDR5', url: 'https://www.vedantcomputers.com/index.php?route=product/search&search=MSI+PRO+B650M-A' }
-      ],
-      ram: [
-        { name: 'Corsair Vengeance LPX 16GB (2x8GB) DDR4 3200MHz', price: 3499, store: 'Amazon', watts: 10, ramType: 'DDR4', url: 'https://www.amazon.in/s?k=Corsair+Vengeance+LPX+16GB+DDR4+3200MHz' },
-        { name: 'XPG ADATA GAMMIX D30 8GB DDR4 3200MHz', price: 1699, store: 'Flipkart', watts: 6, ramType: 'DDR4', url: 'https://www.flipkart.com/search?q=XPG+GAMMIX+D30+8GB+DDR4' },
-        { name: 'G.Skill Ripjaws S5 16GB (1x16GB) DDR5 5200MHz', price: 4799, store: 'Amazon', watts: 12, ramType: 'DDR5', url: 'https://www.amazon.in/s?k=G.Skill+Ripjaws+S5+16GB+DDR5' }
-      ],
-      storage: [
-        { name: 'WD Blue SN580 1TB NVMe PCIe Gen4 SSD', price: 5699, store: 'Amazon', watts: 8, url: 'https://www.amazon.in/s?k=WD+Blue+SN580+1TB+NVMe' },
-        { name: 'Crucial P3 Plus 500GB PCIe 4.0 NVMe M.2 SSD', price: 3399, store: 'Flipkart', watts: 8, url: 'https://www.flipkart.com/search?q=Crucial+P3+Plus+500GB+NVMe' },
-        { name: 'Kingston NV2 1TB M.2 NVMe SSD', price: 5199, store: 'MDComputers', watts: 8, url: 'https://mdcomputers.in/?route=product/search&search=Kingston+NV2+1TB' }
-      ],
-      gpu: [
-        { name: 'Use Integrated Graphics (No Dedicated GPU)', price: 0, store: 'Built-in', watts: 0, url: '#' },
-        { name: 'AMD Radeon RX 6600 8GB GDDR6', price: 19899, store: 'Amazon', watts: 132, url: 'https://www.amazon.in/s?k=RX+6600+8GB' },
-        { name: 'NVIDIA GeForce RTX 3060 12GB GDDR6', price: 24999, store: 'Flipkart', watts: 170, url: 'https://www.flipkart.com/search?q=RTX+3060+12GB' },
-        { name: 'NVIDIA GeForce RTX 4060 8GB GDDR6', price: 27999, store: 'Amazon', watts: 115, url: 'https://www.amazon.in/s?k=RTX+4060+8GB' }
-      ],
-      psu: [
-        { name: 'Deepcool PK550D 550W 80+ Bronze PSU', price: 3599, store: 'Amazon', watts: 0, psuCap: 550, url: 'https://www.amazon.in/s?k=Deepcool+PK550D+550W' },
-        { name: 'Cooler Master MWE 650W V2 80+ Bronze', price: 5199, store: 'Flipkart', watts: 0, psuCap: 650, url: 'https://www.flipkart.com/search?q=Cooler+Master+MWE+650W' },
-        { name: 'Corsair RM750e 750W 80+ Gold Fully Modular', price: 8999, store: 'Amazon', watts: 0, psuCap: 750, url: 'https://www.amazon.in/s?k=Corsair+RM750e' }
-      ],
-      cabinet: [
-        { name: 'Ant Esports ICE-112 Mid-Tower Gaming Cabinet', price: 3199, store: 'Amazon', watts: 10, url: 'https://www.amazon.in/s?k=Ant+Esports+ICE+112' },
-        { name: 'Galax Revolution 05 Mesh (4 Fans Pre-installed)', price: 3799, store: 'Flipkart', watts: 15, url: 'https://www.flipkart.com/search?q=Galax+Revolution+05' },
-        { name: 'Zebronics Zeb-Cronus Tempered Glass Case', price: 2699, store: 'Amazon', watts: 10, url: 'https://www.amazon.in/s?k=Zebronics+Gaming+Cabinet' }
-      ],
-      cooler: [
-        { name: 'AMD/Intel Box Stock Cooler (Included with CPU)', price: 0, store: 'Built-in', watts: 5, url: '#' },
-        { name: 'Deepcool AG400 LED Single Tower Air Cooler', price: 1899, store: 'Amazon', watts: 10, url: 'https://www.amazon.in/s?k=Deepcool+AG400' },
-        { name: 'Cooler Master MasterLiquid ML240L ARGB Liquid Cooler', price: 5999, store: 'Flipkart', watts: 20, url: 'https://www.flipkart.com/search?q=Cooler+Master+ML240L' }
-      ],
-      monitor: [
-        { name: 'LG Ultragear 24-inch 144Hz/180Hz IPS Gaming Monitor', price: 10499, store: 'Amazon', watts: 30, url: 'https://www.amazon.in/s?k=LG+Ultragear+24+inch+IPS' },
-        { name: 'Acer Nitro VG240Y 23.8-inch IPS 180Hz Monitor', price: 8999, store: 'Flipkart', watts: 28, url: 'https://www.flipkart.com/search?q=Acer+Nitro+VG240Y' },
-        { name: 'Samsung 24-inch FHD 75Hz Borderless IPS Monitor', price: 7499, store: 'Amazon', watts: 25, url: 'https://www.amazon.in/s?k=Samsung+24+inch+IPS+Monitor' }
-      ]
-    };
+    <div class="card">
+      <div class="slot-head">
+        <span class="slot-title">⚡ Estimated Wattage</span>
+        <span id="watt-total" style="color:#fbbf24;font-weight:800;">0W</span>
+      </div>
+      <div id="psu-rec" style="font-size:12px;color:#94a3b8;">Recommended PSU: Select components</div>
+    </div>
 
-    let selectedParts = {};
+    <div class="card">
+      <div class="slot-title" style="margin-bottom:10px;">🏪 Store-wise Price Breakdown</div>
+      <div id="store-list" style="font-size:13px;color:#94a3b8;">Abhi koi component select nahi hua hai.</div>
+    </div>
+  </div>
+</div>
 
-    function initApp() {
-      // Populate category dropdown in Custom Modal
-      const catSelect = document.getElementById('custom-cat');
-      catSelect.innerHTML = CATEGORIES.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
-      renderSlots();
-      updateSummary();
+<!-- MODAL FOR CUSTOM LINK -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="slot-head" style="margin-bottom:14px;">
+      <span class="slot-title">🔗 Add Flipkart / Amazon Product</span>
+      <button onclick="closeModal()">✕</button>
+    </div>
+    <div class="field">
+      <label>1. Component Category</label>
+      <select id="m-cat">
+        <option value="cpu">Processor (CPU)</option>
+        <option value="mobo">Motherboard</option>
+        <option value="ram">Memory (RAM)</option>
+        <option value="ssd">Storage (SSD/HDD)</option>
+        <option value="gpu">Graphics Card (GPU)</option>
+        <option value="psu">Power Supply (PSU)</option>
+        <option value="cab">Cabinet (Case)</option>
+        <option value="cool">CPU Cooler</option>
+        <option value="mon">Monitor</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>2. Paste Product Link (Flipkart / Amazon / Any Site)</label>
+      <input type="url" id="m-url" oninput="detectUrl()" placeholder="https://www.flipkart.com/...">
+    </div>
+    <div class="field">
+      <label>3. Product Name</label>
+      <input type="text" id="m-name" placeholder="e.g. AMD Ryzen 5 5600GT">
+    </div>
+    <div class="field">
+      <label>4. Price (₹ INR)</label>
+      <input type="number" id="m-price" placeholder="e.g. 12199">
+    </div>
+    <div class="field">
+      <label>5. Store</label>
+      <select id="m-store">
+        <option value="Amazon">Amazon</option>
+        <option value="Flipkart">Flipkart</option>
+        <option value="MDComputers">MDComputers</option>
+        <option value="Vedant">Vedant</option>
+        <option value="Other">Other Store</option>
+      </select>
+    </div>
+    <button class="btn-primary" style="width:100%;padding:12px;" onclick="addCustom()">Add to PC Build</button>
+  </div>
+</div>
+
+<script>
+const IDS = ['cpu','mobo','ram','ssd','gpu','psu','cab','cool','mon'];
+
+function calc() {
+  let total = 0, watts = 0, count = 0, stores = {};
+  IDS.forEach(id => {
+    const sel = document.getElementById('sel-' + id);
+    const opt = sel.options[sel.selectedIndex];
+    const p = Number(sel.value) || 0;
+    const w = Number(opt.getAttribute('data-w')) || 0;
+    const s = opt.getAttribute('data-s') || 'Store';
+    const u = opt.getAttribute('data-u') || '';
+
+    document.getElementById('price-' + id).textContent = '₹' + p.toLocaleString('en-IN');
+    const linkEl = document.getElementById('link-' + id);
+    if (u && sel.selectedIndex > 0) { linkEl.href = u; linkEl.textContent = 'Buy ↗'; }
+    else { linkEl.textContent = ''; }
+
+    if (sel.selectedIndex > 0) {
+      count++;
+      total += p;
+      watts += w;
+      stores[s] = (stores[s] || 0) + p;
     }
+  });
 
-    function renderSlots() {
-      const container = document.getElementById('slots-container');
-      container.innerHTML = CATEGORIES.map(cat => {
-        const chosen = selectedParts[cat.id];
-        const options = CATALOG[cat.id] || [];
+  document.getElementById('grand-total').textContent = '₹' + total.toLocaleString('en-IN');
+  document.getElementById('watt-total').textContent = watts + 'W';
+  document.getElementById('part-counter').textContent = count + ' / 9 Selected';
+  document.getElementById('psu-rec').textContent = watts > 0 ? 'Recommended PSU: Min ' + (Math.ceil((watts + 150)/50)*50) + 'W' : 'Recommended PSU: Select components';
 
-        return `
-          <div class="glass-card p-4 transition hover:border-slate-700">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <div class="flex items-center gap-2.5">
-                <span class="text-xl">${cat.icon}</span>
-                <div>
-                  <h2 class="text-sm sm:text-base font-bold text-white">${cat.name}</h2>
-                  ${chosen 
-                    ? `<div class="text-xs sm:text-sm text-cyan-300 font-medium mt-0.5">${chosen.name}</div>` 
-                    : `<div class="text-xs text-slate-500">Koi component select nahi kiya gaya</div>`
-                  }
-                </div>
-              </div>
+  const stKeys = Object.keys(stores);
+  document.getElementById('store-list').innerHTML = stKeys.length ? stKeys.map(k => `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1f2937;"><span>${k}</span><strong style="color:#34d399;">₹${stores[k].toLocaleString('en-IN')}</strong></div>`).join('') : 'Abhi koi component select nahi hua hai.';
+}
 
-              <div class="flex items-center gap-2">
-                ${chosen ? `
-                  <span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">${chosen.store}</span>
-                  <span class="text-sm sm:text-base font-bold text-emerald-400">₹${chosen.price.toLocaleString('en-IN')}</span>
-                  ${chosen.url && chosen.url !== '#' ? `<a href="${chosen.url}" target="_blank" class="text-xs px-2.5 py-1 rounded-lg bg-cyan-950 text-cyan-300 border border-cyan-800 hover:bg-cyan-900">Buy ↗</a>` : ''}
-                  <button onclick="removePart('${cat.id}')" class="text-xs px-2 py-1 rounded-lg bg-rose-950/60 text-rose-300 border border-rose-800/50">✕</button>
-                ` : ''}
-              </div>
-            </div>
+function openModal(cat) {
+  document.getElementById('m-cat').value = cat || 'cpu';
+  document.getElementById('m-url').value = '';
+  document.getElementById('m-name').value = '';
+  document.getElementById('m-price').value = '';
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
 
-            <!-- Selector Row -->
-            <div class="mt-3 pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row gap-2">
-              <select onchange="selectFromCatalog('${cat.id}', this.value)" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-200">
-                <option value="">-- List se ${cat.name} chunein --</option>
-                ${options.map((item, idx) => `
-                  <option value="${idx}" ${chosen && chosen.name === item.name ? 'selected' : ''}>
-                    ${item.name} — ₹${item.price.toLocaleString('en-IN')} (${item.store})
-                  </option>
-                `).join('')}
-              </select>
-
-              <button onclick="openCustomModal('${cat.id}')" class="bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 text-xs font-medium px-3 py-2 rounded-xl whitespace-nowrap">
-                + Paste Link (${cat.id.toUpperCase()})
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
+function detectUrl() {
+  const u = document.getElementById('m-url').value;
+  if (u.includes('amazon')) document.getElementById('m-store').value = 'Amazon';
+  else if (u.includes('flipkart')) document.getElementById('m-store').value = 'Flipkart';
+  try {
+    const path = new URL(u).pathname.split('/').filter(Boolean);
+    const slug = path.find(p => p.length > 8) || '';
+    if (slug && !document.getElementById('m-name').value) {
+      document.getElementById('m-name').value = decodeURIComponent(slug).replace(/[-_]+/g, ' ').slice(0, 55);
     }
+  } catch(e) {}
+}
 
-    function selectFromCatalog(catId, indexStr) {
-      if (indexStr === "") {
-        delete selectedParts[catId];
-      } else {
-        const item = CATALOG[catId][parseInt(indexStr, 10)];
-        selectedParts[catId] = { ...item };
-      }
-      renderSlots();
-      updateSummary();
-    }
+function addCustom() {
+  const cat = document.getElementById('m-cat').value;
+  const name = document.getElementById('m-name').value || 'Custom Component';
+  const price = Number(document.getElementById('m-price').value) || 0;
+  const store = document.getElementById('m-store').value;
+  const url = document.getElementById('m-url').value;
 
-    function removePart(catId) {
-      delete selectedParts[catId];
-      renderSlots();
-      updateSummary();
-    }
-
-    function updateSummary() {
-      const keys = Object.keys(selectedParts);
-      document.getElementById('parts-count-badge').textContent = `${keys.length} / ${CATEGORIES.length} Parts Selected`;
-
-      let totalCost = 0;
-      let totalWatts = 0;
-      let storeTotals = {};
-
-      keys.forEach(k => {
-        const p = selectedParts[k];
-        totalCost += Number(p.price) || 0;
-        totalWatts += Number(p.watts) || 0;
-        const st = p.store || 'Other';
-        storeTotals[st] = (storeTotals[st] || 0) + (Number(p.price) || 0);
-      });
-
-      document.getElementById('grand-total').textContent = '₹' + totalCost.toLocaleString('en-IN');
-      document.getElementById('total-wattage').textContent = totalWatts + 'W';
-
-      const pct = Math.min(100, Math.max(5, Math.round((totalWatts / 750) * 100)));
-      document.getElementById('wattage-bar').style.width = pct + '%';
-
-      const recPsu = totalWatts > 0 ? Math.ceil((totalWatts + 150) / 50) * 50 : 0;
-      document.getElementById('psu-recommend').textContent = recPsu > 0 ? `Recommended PSU: Minimum ${recPsu}W` : 'Recommended PSU: None yet';
-
-      // Compatibility Check
-      const cpu = selectedParts['cpu'];
-      const mobo = selectedParts['mobo'];
-      const ram = selectedParts['ram'];
-      const compatBox = document.getElementById('compat-box');
-      const compatMsg = document.getElementById('compat-msg');
-
-      let issues = [];
-      if (cpu && mobo && cpu.socket && mobo.socket && cpu.socket !== mobo.socket) {
-        issues.push(`CPU (${cpu.socket}) aur Motherboard (${mobo.socket}) ka socket alag hai!`);
-      }
-      if (mobo && ram && mobo.ramType && ram.ramType && mobo.ramType !== ram.ramType) {
-        issues.push(`Motherboard (${mobo.ramType}) aur RAM (${ram.ramType}) match nahi kar rahe!`);
-      }
-
-      if (issues.length > 0) {
-        compatBox.className = 'p-3 rounded-xl bg-rose-950/50 border border-rose-800 text-xs text-rose-300';
-        compatBox.querySelector('.font-semibold').textContent = '⚠️ Compatibility Alert!';
-        compatMsg.textContent = issues.join(' ');
-      } else {
-        compatBox.classNa
+  const sel = document.getElementById('sel-' + cat);
+  const opt = document.createElement('option');
+  opt.value = price;
+  opt.setAttribute('data-w', '35');
+  opt.setAttribute('data-s', store);
+  opt.setAttribute('data-u', url);
+  opt.textContent = `${name} — ₹${price.toLocaleString('en-IN')} (${store})`;
+  sel.appendChild(opt);
+  sel.selectedIndex = sel.options.length - 1;
