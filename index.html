@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RigCrafter India - Custom PC Builder</title>
+<title>RigCrafter India - Custom PC Builder & Order</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
   body { background: #0b0f19; color: #e2e8f0; padding-bottom: 60px; }
@@ -11,10 +11,13 @@
   .logo { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
   .badge { font-size: 11px; background: #083344; color: #67e8f9; padding: 2px 8px; border-radius: 99px; border: 1px solid #155e75; }
   .btns { display: flex; gap: 8px; flex-wrap: wrap; }
-  button { cursor: pointer; border: none; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 600; color: #fff; background: #1f2937; border: 1px solid #374151; }
+  button { cursor: pointer; border: none; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 600; color: #fff; background: #1f2937; border: 1px solid #374151; transition: 0.2s; }
+  button:hover { opacity: 0.92; }
   .btn-primary { background: #4f46e5; border-color: #6366f1; }
+  .btn-success { background: #059669; border-color: #10b981; font-size: 14px; padding: 12px; width: 100%; font-weight: 700; margin-top: 10px; }
+  .btn-whatsapp { background: #16a34a; border-color: #22c55e; font-size: 13px; padding: 11px; width: 100%; font-weight: 700; margin-top: 8px; }
   .container { max-width: 1100px; margin: 20px auto; padding: 0 14px; display: grid; grid-template-columns: 1fr; gap: 16px; }
-  @media (min-width: 850px) { .container { grid-template-columns: 2fr 1fr; } }
+  @media (min-width: 850px) { .container { grid-template-columns: 1.8fr 1.2fr; } }
   .card { background: #111827; border: 1px solid #1f2937; border-radius: 14px; padding: 16px; margin-bottom: 12px; }
   .slot-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
   .slot-title { font-size: 15px; font-weight: 700; color: #fff; }
@@ -23,12 +26,16 @@
   @media (min-width: 550px) { .row { flex-direction: row; } }
   select, input { width: 100%; background: #0b0f19; color: #f8fafc; border: 1px solid #334155; border-radius: 10px; padding: 10px; font-size: 13px; }
   .total-num { font-size: 36px; font-weight: 900; color: #34d399; margin: 8px 0; }
-  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 50; align-items: center; justify-content: center; padding: 16px; }
+  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.82); z-index: 50; align-items: center; justify-content: center; padding: 16px; }
   .modal.open { display: flex; }
-  .modal-box { background: #111827; border: 1px solid #374151; border-radius: 16px; width: 100%; max-width: 420px; padding: 18px; }
+  .modal-box { background: #111827; border: 1px solid #374151; border-radius: 16px; width: 100%; max-width: 480px; padding: 18px; max-height: 90vh; overflow-y: auto; }
   .field { margin-bottom: 12px; }
   .field label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
-  .buy-link { font-size: 12px; color: #38bdf8; text-decoration: none; margin-left: 8px; }
+  .buy-link { display: none; font-size: 12px; background: #065f46; color: #6ee7b7; padding: 4px 10px; border-radius: 8px; text-decoration: none; font-weight: 700; margin-left: 8px; border: 1px solid #059669; }
+  .buy-link.show { display: inline-block; }
+  .cart-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid #1f2937; font-size: 12px; }
+  .cart-item-name { color: #e2e8f0; font-weight: 600; flex: 1; }
+  .cart-buy-btn { background: #2563eb; color: #fff; text-decoration: none; padding: 5px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -36,7 +43,8 @@
 <div class="nav">
   <div class="logo">⚡ RigCrafter <span class="badge">INDIA (INR ₹)</span></div>
   <div class="btns">
-    <button class="btn-primary" onclick="openModal('cpu')">+ Add Link</button>
+    <button class="btn-primary" onclick="openModal('cpu')">+ Add Custom Part</button>
+    <button onclick="openOrderModal()" style="background:#059669;border-color:#10b981;">🛒 Order Now</button>
     <button onclick="copyBuild()">📋 Copy</button>
     <button onclick="window.print()">🖨️ Bill</button>
     <button onclick="resetAll()">↻ Reset</button>
@@ -48,8 +56,8 @@
     <div class="card">
       <div class="slot-head">
         <div>
-          <div class="slot-title" style="font-size:18px;">Custom PC Builder <span class="badge" style="background:#064e3b;color:#6ee7b7;">Live Price Active</span></div>
-          <p style="font-size:12px;color:#94a3b8;margin-top:4px;">Parts chuniye aur turant price dekhein.</p>
+          <div class="slot-title" style="font-size:18px;">Custom PC Builder <span class="badge" style="background:#064e3b;color:#6ee7b7;">Direct Order Active</span></div>
+          <p style="font-size:12px;color:#94a3b8;margin-top:4px;">Parts chuniye, live price dekhein aur seedha Order karein.</p>
         </div>
         <span id="part-counter" class="badge">0 / 9 Selected</span>
       </div>
@@ -59,15 +67,15 @@
     <div class="card">
       <div class="slot-head">
         <span class="slot-title">🧠 1. Processor (CPU)</span>
-        <div><span class="slot-price" id="price-cpu">₹0</span><a id="link-cpu" class="buy-link" target="_blank"></a></div>
+        <div><span class="slot-price" id="price-cpu">₹0</span><a id="link-cpu" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
         <select id="sel-cpu" onchange="calc()">
-          <option value="0|65|Amazon|" data-price="0">-- Processor Chunein --</option>
+          <option value="0|65|Amazon|">-- Processor Chunein --</option>
           <option value="12199|65|Amazon|https://www.amazon.in/s?k=AMD+Ryzen+5+5600GT">AMD Ryzen 5 5600GT — ₹12,199 (Amazon)</option>
           <option value="13499|65|Flipkart|https://www.flipkart.com/search?q=AMD+Ryzen+5+5600X">AMD Ryzen 5 5600X — ₹13,499 (Flipkart)</option>
           <option value="9899|65|Amazon|https://www.amazon.in/s?k=Intel+Core+i5+12400F">Intel Core i5-12400F — ₹9,899 (Amazon)</option>
-          <option value="19499|105|MDComputers|https://mdcomputers.in">AMD Ryzen 5 7600X — ₹19,499 (MDComputers)</option>
+          <option value="19499|105|MDComputers|https://mdcomputers.in/?route=product/search&search=Ryzen+5+7600X">AMD Ryzen 5 7600X — ₹19,499 (MDComputers)</option>
         </select>
         <button onclick="openModal('cpu')">+ Link</button>
       </div>
@@ -77,15 +85,15 @@
     <div class="card">
       <div class="slot-head">
         <span class="slot-title">🎛️ 2. Motherboard</span>
-        <div><span class="slot-price" id="price-mobo">₹0</span><a id="link-mobo" class="buy-link" target="_blank"></a></div>
+        <div><span class="slot-price" id="price-mobo">₹0</span><a id="link-mobo" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
         <select id="sel-mobo" onchange="calc()">
-          <option value="0|35|Amazon|" data-price="0">-- Motherboard Chunein --</option>
-          <option value="12899|35|Amazon|https://www.amazon.in">Gigabyte B550 AORUS Elite V2 — ₹12,899 (Amazon)</option>
-          <option value="9499|30|Flipkart|https://www.flipkart.com">MSI B550M PRO-VDH WiFi — ₹9,499 (Flipkart)</option>
-          <option value="10999|35|Amazon|https://www.amazon.in">ASUS Prime B660M-A D4 — ₹10,999 (Amazon)</option>
-          <option value="14999|40|Vedant|https://www.vedantcomputers.com">MSI PRO B650M-A WiFi — ₹14,999 (Vedant)</option>
+          <option value="0|35|Amazon|">-- Motherboard Chunein --</option>
+          <option value="12899|35|Amazon|https://www.amazon.in/s?k=Gigabyte+B550+AORUS+Elite+V2">Gigabyte B550 AORUS Elite V2 — ₹12,899 (Amazon)</option>
+          <option value="9499|30|Flipkart|https://www.flipkart.com/search?q=MSI+B550M+PRO-VDH+WiFi">MSI B550M PRO-VDH WiFi — ₹9,499 (Flipkart)</option>
+          <option value="10999|35|Amazon|https://www.amazon.in/s?k=ASUS+Prime+B660M-A+D4">ASUS Prime B660M-A D4 — ₹10,999 (Amazon)</option>
+          <option value="14999|40|Vedant|https://www.vedantcomputers.com/index.php?route=product/search&search=MSI+PRO+B650M-A+WiFi">MSI PRO B650M-A WiFi — ₹14,999 (Vedant)</option>
         </select>
         <button onclick="openModal('mobo')">+ Link</button>
       </div>
@@ -95,14 +103,14 @@
     <div class="card">
       <div class="slot-head">
         <span class="slot-title">⚡ 3. Memory (RAM)</span>
-        <div><span class="slot-price" id="price-ram">₹0</span><a id="link-ram" class="buy-link" target="_blank"></a></div>
+        <div><span class="slot-price" id="price-ram">₹0</span><a id="link-ram" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
         <select id="sel-ram" onchange="calc()">
-          <option value="0|10|Amazon|" data-price="0">-- RAM Chunein --</option>
-          <option value="3499|10|Amazon|https://www.amazon.in">Corsair Vengeance 16GB (2x8GB) DDR4 — ₹3,499 (Amazon)</option>
-          <option value="1699|6|Flipkart|https://www.flipkart.com">XPG ADATA GAMMIX 8GB DDR4 — ₹1,699 (Flipkart)</option>
-          <option value="4799|12|Amazon|https://www.amazon.in">G.Skill Ripjaws 16GB DDR5 — ₹4,799 (Amazon)</option>
+          <option value="0|10|Amazon|">-- RAM Chunein --</option>
+          <option value="3499|10|Amazon|https://www.amazon.in/s?k=Corsair+Vengeance+16GB+DDR4">Corsair Vengeance 16GB (2x8GB) DDR4 — ₹3,499 (Amazon)</option>
+          <option value="1699|6|Flipkart|https://www.flipkart.com/search?q=XPG+ADATA+GAMMIX+8GB+DDR4">XPG ADATA GAMMIX 8GB DDR4 — ₹1,699 (Flipkart)</option>
+          <option value="4799|12|Amazon|https://www.amazon.in/s?k=G.Skill+Ripjaws+16GB+DDR5">G.Skill Ripjaws 16GB DDR5 — ₹4,799 (Amazon)</option>
         </select>
         <button onclick="openModal('ram')">+ Link</button>
       </div>
@@ -112,14 +120,14 @@
     <div class="card">
       <div class="slot-head">
         <span class="slot-title">💾 4. Storage (SSD)</span>
-        <div><span class="slot-price" id="price-ssd">₹0</span><a id="link-ssd" class="buy-link" target="_blank"></a></div>
+        <div><span class="slot-price" id="price-ssd">₹0</span><a id="link-ssd" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
         <select id="sel-ssd" onchange="calc()">
-          <option value="0|8|Amazon|" data-price="0">-- SSD Chunein --</option>
-          <option value="5699|8|Amazon|https://www.amazon.in">WD Blue SN580 1TB NVMe SSD — ₹5,699 (Amazon)</option>
-          <option value="3399|8|Flipkart|https://www.flipkart.com">Crucial P3 Plus 500GB NVMe SSD — ₹3,399 (Flipkart)</option>
-          <option value="5199|8|Amazon|https://www.amazon.in">Kingston NV2 1TB M.2 SSD — ₹5,199 (Amazon)</option>
+          <option value="0|8|Amazon|">-- SSD Chunein --</option>
+          <option value="5699|8|Amazon|https://www.amazon.in/s?k=WD+Blue+SN580+1TB+NVMe">WD Blue SN580 1TB NVMe SSD — ₹5,699 (Amazon)</option>
+          <option value="3399|8|Flipkart|https://www.flipkart.com/search?q=Crucial+P3+Plus+500GB+NVMe">Crucial P3 Plus 500GB NVMe SSD — ₹3,399 (Flipkart)</option>
+          <option value="5199|8|Amazon|https://www.amazon.in/s?k=Kingston+NV2+1TB+M.2">Kingston NV2 1TB M.2 SSD — ₹5,199 (Amazon)</option>
         </select>
         <button onclick="openModal('ssd')">+ Link</button>
       </div>
@@ -129,15 +137,15 @@
     <div class="card">
       <div class="slot-head">
         <span class="slot-title">🎮 5. Graphics Card (GPU)</span>
-        <div><span class="slot-price" id="price-gpu">₹0</span><a id="link-gpu" class="buy-link" target="_blank"></a></div>
+        <div><span class="slot-price" id="price-gpu">₹0</span><a id="link-gpu" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
         <select id="sel-gpu" onchange="calc()">
-          <option value="0|0|Built-in|" data-price="0">-- GPU Chunein --</option>
+          <option value="0|0|Built-in|">-- GPU Chunein --</option>
           <option value="0|0|Built-in|">Integrated Graphics (₹0)</option>
-          <option value="19899|132|Amazon|https://www.amazon.in">AMD Radeon RX 6600 8GB — ₹19,899 (Amazon)</option>
-          <option value="24999|170|Flipkart|https://www.flipkart.com">NVIDIA RTX 3060 12GB — ₹24,999 (Flipkart)</option>
-          <option value="27999|115|Amazon|https://www.amazon.in">NVIDIA RTX 4060 8GB — ₹27,999 (Amazon)</option>
+          <option value="19899|132|Amazon|https://www.amazon.in/s?k=AMD+Radeon+RX+6600+8GB">AMD Radeon RX 6600 8GB — ₹19,899 (Amazon)</option>
+          <option value="24999|170|Flipkart|https://www.flipkart.com/search?q=NVIDIA+RTX+3060+12GB">NVIDIA RTX 3060 12GB — ₹24,999 (Flipkart)</option>
+          <option value="27999|115|Amazon|https://www.amazon.in/s?k=NVIDIA+RTX+4060+8GB">NVIDIA RTX 4060 8GB — ₹27,999 (Amazon)</option>
         </select>
         <button onclick="openModal('gpu')">+ Link</button>
       </div>
@@ -147,14 +155,14 @@
     <div class="card">
       <div class="slot-head">
         <span class="slot-title">🔌 6. Power Supply (PSU)</span>
-        <div><span class="slot-price" id="price-psu">₹0</span><a id="link-psu" class="buy-link" target="_blank"></a></div>
+        <div><span class="slot-price" id="price-psu">₹0</span><a id="link-psu" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
         <select id="sel-psu" onchange="calc()">
-          <option value="0|0|Amazon|" data-price="0">-- PSU Chunein --</option>
-          <option value="3599|0|Amazon|https://www.amazon.in">Deepcool PK550D 550W — ₹3,599 (Amazon)</option>
-          <option value="5199|0|Flipkart|https://www.flipkart.com">Cooler Master 650W V2 — ₹5,199 (Flipkart)</option>
-          <option value="8999|0|Amazon|https://www.amazon.in">Corsair RM750e 750W Gold — ₹8,999 (Amazon)</option>
+          <option value="0|0|Amazon|">-- PSU Chunein --</option>
+          <option value="3599|0|Amazon|https://www.amazon.in/s?k=Deepcool+PK550D+550W">Deepcool PK550D 550W — ₹3,599 (Amazon)</option>
+          <option value="5199|0|Flipkart|https://www.flipkart.com/search?q=Cooler+Master+650W+V2">Cooler Master 650W V2 — ₹5,199 (Flipkart)</option>
+          <option value="8999|0|Amazon|https://www.amazon.in/s?k=Corsair+RM750e+750W+Gold">Corsair RM750e 750W Gold — ₹8,999 (Amazon)</option>
         </select>
         <button onclick="openModal('psu')">+ Link</button>
       </div>
@@ -164,13 +172,13 @@
     <div class="card">
       <div class="slot-head">
         <span class="slot-title">🖥️ 7. Cabinet</span>
-        <div><span class="slot-price" id="price-cab">₹0</span><a id="link-cab" class="buy-link" target="_blank"></a></div>
+        <div><span class="slot-price" id="price-cab">₹0</span><a id="link-cab" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
         <select id="sel-cab" onchange="calc()">
-          <option value="0|10|Amazon|" data-price="0">-- Cabinet Chunein --</option>
-          <option value="3199|10|Amazon|https://www.amazon.in">Ant Esports ICE-112 Case — ₹3,199 (Amazon)</option>
-          <option value="3799|15|Flipkart|https://www.flipkart.com">Galax Revolution 05 RGB — ₹3,799 (Flipkart)</option>
+          <option value="0|10|Amazon|">-- Cabinet Chunein --</option>
+          <option value="3199|10|Amazon|https://www.amazon.in/s?k=Ant+Esports+ICE-112+Cabinet">Ant Esports ICE-112 Case — ₹3,199 (Amazon)</option>
+          <option value="3799|15|Flipkart|https://www.flipkart.com/search?q=Galax+Revolution+05+RGB+Cabinet">Galax Revolution 05 RGB — ₹3,799 (Flipkart)</option>
         </select>
         <button onclick="openModal('cab')">+ Link</button>
       </div>
@@ -180,14 +188,14 @@
     <div class="card">
       <div class="slot-head">
         <span class="slot-title">❄️ 8. CPU Cooler</span>
-        <div><span class="slot-price" id="price-cool">₹0</span><a id="link-cool" class="buy-link" target="_blank"></a></div>
+        <div><span class="slot-price" id="price-cool">₹0</span><a id="link-cool" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
         <select id="sel-cool" onchange="calc()">
-          <option value="0|5|Amazon|" data-price="0">-- Cooler Chunein --</option>
+          <option value="0|5|Amazon|">-- Cooler Chunein --</option>
           <option value="0|5|Built-in|">Box Stock Cooler (₹0)</option>
-          <option value="1899|10|Amazon|https://www.amazon.in">Deepcool AG400 Air Cooler — ₹1,899 (Amazon)</option>
-          <option value="5999|20|Flipkart|https://www.flipkart.com">Cooler Master ML240L Liquid — ₹5,999 (Flipkart)</option>
+          <option value="1899|10|Amazon|https://www.amazon.in/s?k=Deepcool+AG400+Air+Cooler">Deepcool AG400 Air Cooler — ₹1,899 (Amazon)</option>
+          <option value="5999|20|Flipkart|https://www.flipkart.com/search?q=Cooler+Master+ML240L+Liquid+Cooler">Cooler Master ML240L Liquid — ₹5,999 (Flipkart)</option>
         </select>
         <button onclick="openModal('cool')">+ Link</button>
       </div>
@@ -197,43 +205,47 @@
     <div class="card">
       <div class="slot-head">
         <span class="slot-title">📺 9. Monitor</span>
-        <div><span class="slot-price" id="price-mon">₹0</span><a id="link-mon" class="buy-link" target="_blank"></a></div>
+        <div><span class="slot-price" id="price-mon">₹0</span><a id="link-mon" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
         <select id="sel-mon" onchange="calc()">
-          <option value="0|30|Amazon|" data-price="0">-- Monitor Chunein --</option>
-          <option value="10499|30|Amazon|https://www.amazon.in">LG Ultragear 24" 180Hz IPS — ₹10,499 (Amazon)</option>
-          <option value="8999|28|Flipkart|https://www.flipkart.com">Acer Nitro 23.8" 180Hz — ₹8,999 (Flipkart)</option>
+          <option value="0|30|Amazon|">-- Monitor Chunein --</option>
+          <option value="10499|30|Amazon|https://www.amazon.in/s?k=LG+Ultragear+24+180Hz+IPS">LG Ultragear 24" 180Hz IPS — ₹10,499 (Amazon)</option>
+          <option value="8999|28|Flipkart|https://www.flipkart.com/search?q=Acer+Nitro+23.8+180Hz+Monitor">Acer Nitro 23.8" 180Hz — ₹8,999 (Flipkart)</option>
         </select>
         <button onclick="openModal('mon')">+ Link</button>
       </div>
     </div>
   </div>
 
-  <!-- RIGHT: SUMMARY -->
+  <!-- RIGHT: SUMMARY & ORDER -->
   <div>
-    <div class="card">
+    <div class="card" style="position: sticky; top: 70px;">
       <div style="font-size:12px;color:#94a3b8;text-transform:uppercase;">Total Build Cost</div>
       <div class="total-num" id="grand-total">₹0</div>
-      <div style="font-size:12px;color:#64748b;">GST Included in MRP</div>
-    </div>
+      <div style="font-size:12px;color:#64748b;margin-bottom:12px;">GST Included in MRP</div>
 
-    <div class="card">
+      <button class="btn-success" onclick="openOrderModal()">🛒 Order Selected Parts</button>
+      <button class="btn-whatsapp" onclick="orderWhatsApp()">💬 Send Build Order on WhatsApp</button>
+
+      <hr style="border:0;border-top:1px solid #1f2937;margin:16px 0;">
+
       <div class="slot-head">
-        <span class="slot-title">⚡ Wattage</span>
+        <span class="slot-title">⚡ Estimated Wattage</span>
         <span id="watt-total" style="color:#fbbf24;font-weight:800;">0W</span>
       </div>
-      <div id="psu-rec" style="font-size:12px;color:#94a3b8;">Recommended PSU: Select parts</div>
-    </div>
+      <div id="psu-rec" style="font-size:12px;color:#94a3b8;margin-bottom:16px;">Recommended PSU: Select parts</div>
 
-    <div class="card">
-      <div class="slot-title" style="margin-bottom:10px;">🏪 Store Breakdown</div>
+      <div class="slot-title" style="margin-bottom:8px;">🛍️ Your Selected Cart</div>
+      <div id="cart-list" style="font-size:13px;color:#94a3b8;margin-bottom:16px;">Abhi koi part select nahi kiya gaya hai.</div>
+
+      <div class="slot-title" style="margin-bottom:8px;">🏪 Store-wise Total</div>
       <div id="store-list" style="font-size:13px;color:#94a3b8;">No components selected.</div>
     </div>
   </div>
 </div>
 
-<!-- MODAL -->
+<!-- ADD CUSTOM PRODUCT MODAL -->
 <div class="modal" id="modal">
   <div class="modal-box">
     <div class="slot-head" style="margin-bottom:14px;">
@@ -245,21 +257,45 @@
         <option value="cpu">CPU</option><option value="mobo">Motherboard</option><option value="ram">RAM</option><option value="ssd">Storage</option><option value="gpu">GPU</option><option value="psu">PSU</option><option value="cab">Cabinet</option><option value="cool">Cooler</option><option value="mon">Monitor</option>
       </select>
     </div>
-    <div class="field"><label>Product Link</label><input type="url" id="m-url" placeholder="https://..."></div>
-    <div class="field"><label>Name</label><input type="text" id="m-name" placeholder="Component Name"></div>
+    <div class="field"><label>Product Buy Link (Amazon/Flipkart URL)</label><input type="url" id="m-url" placeholder="https://www.amazon.in/..."></div>
+    <div class="field"><label>Component Name</label><input type="text" id="m-name" placeholder="e.g. Ryzen 5 5600GT"></div>
     <div class="field"><label>Price (₹)</label><input type="number" id="m-price" placeholder="12000"></div>
     <div class="field"><label>Store</label>
-      <select id="m-store"><option value="Amazon">Amazon</option><option value="Flipkart">Flipkart</option><option value="MDComputers">MDComputers</option><option value="Other">Other</option></select>
+      <select id="m-store"><option value="Amazon">Amazon</option><option value="Flipkart">Flipkart</option><option value="MDComputers">MDComputers</option><option value="Vedant">Vedant</option><option value="Other">Other</option></select>
     </div>
-    <button class="btn-primary" style="width:100%;padding:12px;" onclick="addCustom()">Add Component</button>
+    <button class="btn-primary" style="width:100%;padding:12px;" onclick="addCustom()">Add & Select Component</button>
+  </div>
+</div>
+
+<!-- ORDER CHECKOUT MODAL -->
+<div class="modal" id="order-modal">
+  <div class="modal-box">
+    <div class="slot-head" style="margin-bottom:12px;">
+      <span class="slot-title" style="font-size:17px;">🛒 Complete Your PC Order</span>
+      <button onclick="closeOrderModal()">✕</button>
+    </div>
+    <p style="font-size:12px;color:#94a3b8;margin-bottom:12px;">Niche aapke select kiye huye parts hain. Har part ke saamne <b>Buy Now</b> par click karke seedha store se order karein:</p>
+    
+    <div id="order-modal-list" style="max-height:260px;overflow-y:auto;margin-bottom:14px;border:1px solid #1f2937;border-radius:10px;padding:10px;background:#0b0f19;"></div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid #1f2937;margin-bottom:10px;">
+      <span style="font-size:14px;font-weight:700;">Grand Total:</span>
+      <span id="order-modal-total" style="font-size:20px;font-weight:900;color:#34d399;">₹0</span>
+    </div>
+
+    <button class="btn-primary" style="width:100%;padding:12px;margin-bottom:8px;" onclick="openAllLinks()">🚀 Open All Store Links at Once</button>
+    <button class="btn-whatsapp" onclick="orderWhatsApp()">💬 Share / Order via WhatsApp</button>
   </div>
 </div>
 
 <script>
 const IDS = ['cpu','mobo','ram','ssd','gpu','psu','cab','cool','mon'];
+let selectedItems = [];
 
 function calc() {
   let total = 0, watts = 0, count = 0, stores = {};
+  selectedItems = [];
+
   IDS.forEach(id => {
     const sel = document.getElementById('sel-' + id);
     const val = sel.value;
@@ -268,17 +304,26 @@ function calc() {
     const w = Number(parts[1]) || 0;
     const s = parts[2] || 'Store';
     const u = parts[3] || '';
+    const itemText = sel.options[sel.selectedIndex].text.split(' — ')[0];
 
     document.getElementById('price-' + id).textContent = '₹' + p.toLocaleString('en-IN');
     const linkEl = document.getElementById('link-' + id);
-    if (u && sel.selectedIndex > 0) { linkEl.href = u; linkEl.textContent = 'Buy ↗'; }
-    else { linkEl.textContent = ''; }
 
-    if (sel.selectedIndex > 0 && p > 0) {
+    if (sel.selectedIndex > 0 && u) {
+      linkEl.href = u;
+      linkEl.classList.add('show');
+    } else {
+      linkEl.classList.remove('show');
+    }
+
+    if (sel.selectedIndex > 0) {
       count++;
       total += p;
       watts += w;
-      stores[s] = (stores[s] || 0) + p;
+      if (p > 0) {
+        stores[s] = (stores[s] || 0) + p;
+      }
+      selectedItems.push({ id, name: itemText, price: p, store: s, url: u });
     }
   });
 
@@ -287,51 +332,19 @@ function calc() {
   document.getElementById('part-counter').textContent = count + ' / 9 Selected';
   document.getElementById('psu-rec').textContent = watts > 0 ? 'Recommended PSU: Min ' + (Math.ceil((watts + 150)/50)*50) + 'W' : 'Recommended PSU: Select parts';
 
+  // Render Cart List
+  const cartEl = document.getElementById('cart-list');
+  if (selectedItems.length === 0) {
+    cartEl.innerHTML = 'Abhi koi part select nahi kiya gaya hai.';
+  } else {
+    cartEl.innerHTML = selectedItems.map(item => `
+      <div class="cart-item">
+        <div class="cart-item-name">${item.name}<br><span style="color:#34d399;">₹${item.price.toLocaleString('en-IN')}</span> <span style="color:#64748b;">(${item.store})</span></div>
+        ${item.url ? `<a href="${item.url}" target="_blank" class="cart-buy-btn">Buy ↗</a>` : `<span style="font-size:11px;color:#64748b;">Included</span>`}
+      </div>
+    `).join('');
+  }
+
+  // Render Store Breakdown
   const stKeys = Object.keys(stores);
-  document.getElementById('store-list').innerHTML = stKeys.length ? stKeys.map(k => `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1f2937;"><span>${k}</span><strong style="color:#34d399;">₹${stores[k].toLocaleString('en-IN')}</strong></div>`).join('') : 'No components selected.';
-}
-
-function openModal(cat) {
-  document.getElementById('m-cat').value = cat || 'cpu';
-  document.getElementById('m-url').value = '';
-  document.getElementById('m-name').value = '';
-  document.getElementById('m-price').value = '';
-  document.getElementById('modal').classList.add('open');
-}
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-
-function addCustom() {
-  const cat = document.getElementById('m-cat').value;
-  const name = document.getElementById('m-name').value || 'Custom Part';
-  const price = Number(document.getElementById('m-price').value) || 0;
-  const store = document.getElementById('m-store').value;
-  const url = document.getElementById('m-url').value;
-
-  const sel = document.getElementById('sel-' + cat);
-  const opt = document.createElement('option');
-  opt.value = `${price}|35|${store}|${url}`;
-  opt.textContent = `${name} — ₹${price.toLocaleString('en-IN')} (${store})`;
-  sel.appendChild(opt);
-  sel.selectedIndex = sel.options.length - 1;
-  closeModal();
-  calc();
-}
-
-function resetAll() {
-  IDS.forEach(id => document.getElementById('sel-' + id).selectedIndex = 0);
-  calc();
-}
-
-function copyBuild() {
-  let txt = '🖥️ My Custom PC Build:\n';
-  IDS.forEach(id => {
-    const sel = document.getElementById('sel-' + id);
-    if (sel.selectedIndex > 0) txt += '• ' + sel.options[sel.selectedIndex].text + '\n';
-  });
-  txt += '\nTotal: ' + document.getElementById('grand-total').textContent;
-  navigator.clipboard.writeText(txt);
-  alert('Build copied!');
-}
-</script>
-</body>
-</html>
+  document.getElementById('store-list').innerHTML = stKeys.length ? stKeys.map(k => `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1f2937;"><span>${k}</span><strong style="color:#34d399;">₹${stores[k].toLocaleString('en-IN')}</strong></div>`).join('') : 
