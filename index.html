@@ -3,20 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RigCrafter India - v4 Auto-Price</title>
+<title>RigCrafter India - v5.0 3D Visualizer & Order</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-  body { background: #0b0f19; color: #e2e8f0; padding-bottom: 60px; }
-  .nav { background: #111827; border-bottom: 1px solid #1f2937; padding: 12px 16px; position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
+  body { background: #070b14; color: #e2e8f0; padding-bottom: 60px; overflow-x: hidden; }
+  .nav { background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #1f2937; padding: 12px 16px; position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
   .logo { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
-  .badge { font-size: 11px; background: #dc2626; color: #fff; padding: 3px 10px; border-radius: 99px; font-weight: 800; }
+  .badge { font-size: 11px; background: linear-gradient(90deg, #7c3aed, #db2777); color: #fff; padding: 3px 10px; border-radius: 99px; font-weight: 800; box-shadow: 0 0 12px rgba(219,39,119,0.5); }
   .btns { display: flex; gap: 8px; flex-wrap: wrap; }
-  button { cursor: pointer; border: none; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 600; color: #fff; background: #1f2937; border: 1px solid #374151; }
+  button { cursor: pointer; border: none; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 600; color: #fff; background: #1f2937; border: 1px solid #374151; transition: 0.2s; }
+  button:active { transform: scale(0.97); }
   .btn-primary { background: #4f46e5; border-color: #6366f1; }
   .btn-success { background: #059669; border-color: #10b981; font-size: 14px; padding: 12px; width: 100%; font-weight: 700; margin-top: 10px; }
   .btn-whatsapp { background: #16a34a; border-color: #22c55e; font-size: 13px; padding: 11px; width: 100%; font-weight: 700; margin-top: 8px; }
-  .container { max-width: 1100px; margin: 20px auto; padding: 0 14px; display: grid; grid-template-columns: 1fr; gap: 16px; }
-  @media (min-width: 850px) { .container { grid-template-columns: 1.8fr 1.2fr; } }
+  
+  .container { max-width: 1180px; margin: 20px auto; padding: 0 14px; display: grid; grid-template-columns: 1fr; gap: 18px; }
+  @media (min-width: 880px) { .container { grid-template-columns: 1.6fr 1.4fr; } }
+  
   .card { background: #111827; border: 1px solid #1f2937; border-radius: 14px; padding: 16px; margin-bottom: 12px; }
   .slot-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
   .slot-title { font-size: 15px; font-weight: 700; color: #fff; }
@@ -24,23 +27,87 @@
   .row { display: flex; gap: 8px; flex-direction: column; }
   @media (min-width: 550px) { .row { flex-direction: row; } }
   select, input { width: 100%; background: #0b0f19; color: #f8fafc; border: 1px solid #334155; border-radius: 10px; padding: 10px; font-size: 13px; }
-  .total-num { font-size: 36px; font-weight: 900; color: #34d399; margin: 8px 0; }
-  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.82); z-index: 50; align-items: center; justify-content: center; padding: 16px; }
-  .modal.open { display: flex; }
-  .modal-box { background: #111827; border: 1px solid #374151; border-radius: 16px; width: 100%; max-width: 480px; padding: 18px; max-height: 90vh; overflow-y: auto; }
-  .field { margin-bottom: 12px; }
-  .field label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+  .total-num { font-size: 34px; font-weight: 900; color: #34d399; margin: 6px 0; }
+  
   .buy-link { display: none; font-size: 12px; background: #065f46; color: #6ee7b7; padding: 4px 10px; border-radius: 8px; text-decoration: none; font-weight: 700; margin-left: 8px; border: 1px solid #059669; }
   .buy-link.show { display: inline-block; }
+
+  /* 3D Component Preview Card inside each slot */
+  .preview-3d-box { display: none; margin-top: 12px; background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%); border: 1px solid #334155; border-radius: 12px; padding: 12px; align-items: center; justify-content: space-between; gap: 14px; animation: popIn 0.35s ease; perspective: 700px; }
+  .preview-3d-box.active { display: flex; flex-wrap: wrap; }
+  @keyframes popIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+  
+  .holo-stage { width: 95px; height: 85px; background: rgba(15,23,42,0.8); border: 1px solid #38bdf8; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; transform-style: preserve-3d; animation: float3d 3.5s ease-in-out infinite; box-shadow: 0 10px 25px rgba(56,189,248,0.25), inset 0 0 15px rgba(56,189,248,0.2); }
+  @keyframes float3d { 0%, 100% { transform: rotateY(-14deg) rotateX(10deg) translateY(0px); } 50% { transform: rotateY(14deg) rotateX(-8deg) translateY(-5px); } }
+  .holo-stage svg { width: 58px; height: 58px; filter: drop-shadow(0 0 8px rgba(56,189,248,0.7)); }
+  .holo-tag { position: absolute; bottom: 3px; font-size: 9px; background: #0284c7; color: #fff; padding: 1px 6px; border-radius: 99px; font-weight: 800; letter-spacing: 0.5px; }
+
+  .preview-info { flex: 1; min-width: 170px; }
+  .preview-name { font-size: 14px; font-weight: 800; color: #f8fafc; margin-bottom: 4px; }
+  .preview-spec { font-size: 11px; color: #94a3b8; margin-bottom: 8px; }
+  .vid-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn-video { background: #dc2626; color: #fff; text-decoration: none; padding: 6px 11px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #ef4444; cursor: pointer; }
+  .btn-3d-spin { background: #0284c7; color: #fff; padding: 6px 11px; border-radius: 8px; font-size: 11px; font-weight: 700; border: 1px solid #38bdf8; cursor: pointer; }
+
+  /* INTERACTIVE 3D PC CABINET STAGE */
+  .rig-stage-wrap { background: radial-gradient(circle at 50% 35%, #1e1b4b 0%, #090d16 75%); border: 1px solid #312e81; border-radius: 16px; padding: 14px; margin-bottom: 14px; text-align: center; position: relative; overflow: hidden; }
+  .rig-stage-head { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #a5b4fc; margin-bottom: 8px; }
+  .scene-3d { width: 100%; height: 270px; perspective: 900px; display: flex; align-items: center; justify-content: center; cursor: grab; user-select: none; touch-action: pan-y; }
+  .scene-3d:active { cursor: grabbing; }
+  
+  .pc-rig-3d { width: 175px; height: 215px; position: relative; transform-style: preserve-3d; transform: rotateX(-12deg) rotateY(-28deg); transition: transform 0.08s linear; }
+  .case-face { position: absolute; border: 2px solid #475569; background: rgba(15, 23, 42, 0.75); }
+  /* Front, Back, Left, Right, Top, Bottom */
+  .face-front { width: 90px; height: 215px; transform: rotateY(90deg) translateZ(130px); left: 42px; background: linear-gradient(180deg, #0f172a, #1e293b); border-color: #38bdf8; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; }
+  .face-back { width: 90px; height: 215px; transform: rotateY(-90deg) translateZ(45px); left: 42px; background: #090d16; }
+  .face-top { width: 175px; height: 90px; transform: rotateX(90deg) translateZ(45px); top: 0; background: #111827; }
+  .face-bottom { width: 175px; height: 90px; transform: rotateX(-90deg) translateZ(170px); top: 0; background: #090d16; box-shadow: 0 0 35px rgba(56, 189, 248, 0.45); }
+  .face-side-back { width: 175px; height: 215px; transform: translateZ(-45px); background: #0f172a; }
+  .face-glass { width: 175px; height: 215px; transform: translateZ(45px); background: rgba(56, 189, 248, 0.06); border: 2px solid rgba(56, 189, 248, 0.45); box-shadow: inset 0 0 20px rgba(56, 189, 248, 0.15); }
+
+  /* Inside 3D Parts */
+  .part-3d { position: absolute; opacity: 0.12; transition: all 0.4s ease; transform-style: preserve-3d; }
+  .part-3d.installed { opacity: 1; filter: drop-shadow(0 0 8px currentColor); }
+  
+  /* Motherboard inside rig */
+  .p3d-mobo { width: 115px; height: 135px; top: 18px; left: 16px; transform: translateZ(-25px); background: #1e293b; border: 2px solid #818cf8; border-radius: 6px; color: #818cf8; }
+  /* CPU / Cooler fan */
+  .p3d-cpu { width: 42px; height: 42px; top: 42px; left: 42px; transform: translateZ(-12px); background: radial-gradient(circle, #38bdf8, #1d4ed8); border-radius: 50%; border: 2px solid #fff; color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; }
+  .p3d-cpu.installed { animation: spinFan 1.2s linear infinite; }
+  @keyframes spinFan { 100% { transform: translateZ(-12px) rotate(360deg); } }
+  
+  /* RAM Sticks */
+  .p3d-ram { width: 14px; height: 44px; top: 40px; left: 94px; transform: translateZ(-14px); background: linear-gradient(180deg, #f43f5e, #a855f7, #3b82f6); border-radius: 3px; color: #f43f5e; }
+  /* SSD */
+  .p3d-ssd { width: 38px; height: 14px; top: 95px; left: 42px; transform: translateZ(-16px); background: #10b981; border-radius: 3px; color: #10b981; font-size: 7px; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+  /* GPU */
+  .p3d-gpu { width: 125px; height: 28px; top: 115px; left: 14px; transform: translateZ(5px); background: linear-gradient(90deg, #059669, #10b981); border: 2px solid #6ee7b7; border-radius: 5px; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; letter-spacing: 1px; }
+  /* PSU */
+  .p3d-psu { width: 75px; height: 38px; bottom: 8px; left: 14px; transform: translateZ(-10px); background: #334155; border: 2px solid #fbbf24; border-radius: 4px; color: #fbbf24; font-size: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+  /* Front RGB Fans */
+  .rgb-fan { width: 42px; height: 42px; border-radius: 50%; border: 3px dashed #ec4899; opacity: 0.2; }
+  .rgb-fan.on { opacity: 1; animation: spinRgb 1.5s linear infinite; box-shadow: 0 0 12px #ec4899; }
+  @keyframes spinRgb { 100% { transform: rotate(360deg); } }
+
+  /* 3D Monitor Floating Next to PC */
+  .mon-3d { width: 110px; height: 70px; position: absolute; right: -95px; top: 65px; transform: rotateY(-18deg) translateZ(20px); background: #090d16; border: 3px solid #38bdf8; border-radius: 6px; opacity: 0.1; transition: 0.4s; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: #38bdf8; }
+  .mon-3d.installed { opacity: 1; background: linear-gradient(135deg, #0284c7, #7c3aed); color: #fff; box-shadow: 0 0 20px rgba(56,189,248,0.6); }
+
   .cart-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid #1f2937; font-size: 12px; }
   .cart-item-name { color: #e2e8f0; font-weight: 600; flex: 1; }
   .cart-buy-btn { background: #2563eb; color: #fff; text-decoration: none; padding: 5px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; white-space: nowrap; }
+
+  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 50; align-items: center; justify-content: center; padding: 16px; }
+  .modal.open { display: flex; }
+  .modal-box { background: #111827; border: 1px solid #374151; border-radius: 16px; width: 100%; max-width: 520px; padding: 18px; max-height: 90vh; overflow-y: auto; }
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
 </style>
 </head>
 <body>
 
 <div class="nav">
-  <div class="logo">⚡ RigCrafter <span class="badge">v4.0 AUTO-PRICE</span></div>
+  <div class="logo">⚡ RigCrafter <span class="badge">v5.0 3D + VIDEO</span></div>
   <div class="btns">
     <button class="btn-primary" onclick="openModal('cpu')">+ Add Custom Part</button>
     <button onclick="openOrderModal()" style="background:#059669;border-color:#10b981;">🛒 Order Now</button>
@@ -50,30 +117,82 @@
 </div>
 
 <div class="container">
+  <!-- LEFT: COMPONENT SELECTOR WITH 3D CARDS & VIDEO -->
   <div id="builder-list"></div>
 
+  <!-- RIGHT: INTERACTIVE 3D PC RIG & ORDER SUMMARY -->
   <div>
-    <div class="card" style="position: sticky; top: 70px;">
-      <div style="font-size:12px;color:#94a3b8;text-transform:uppercase;">Total Build Cost</div>
-      <div class="total-num" id="grand-total">₹0</div>
-      <div style="font-size:12px;color:#64748b;margin-bottom:12px;">GST Included • Auto-Calculating</div>
-
-      <button class="btn-success" onclick="openOrderModal()">🛒 Order Selected Parts</button>
-      <button class="btn-whatsapp" onclick="orderWhatsApp()">💬 Send Build Order on WhatsApp</button>
-
-      <hr style="border:0;border-top:1px solid #1f2937;margin:16px 0;">
-
-      <div class="slot-head">
-        <span class="slot-title">⚡ Estimated Wattage</span>
-        <span id="watt-total" style="color:#fbbf24;font-weight:800;">0W</span>
+    <div style="position: sticky; top: 70px;">
+      
+      <!-- 3D VIRTUAL PC BUILDER STAGE -->
+      <div class="rig-stage-wrap">
+        <div class="rig-stage-head">
+          <span>🎮 <b>Interactive 3D Virtual Rig</b> (Ungli/Mouse se ghumayein)</span>
+          <button onclick="autoRotateToggle()" style="padding:3px 8px;font-size:10px;">🔄 Auto-Spin</button>
+        </div>
+        <div class="scene-3d" id="scene-3d">
+          <div class="pc-rig-3d" id="pc-rig">
+            <div class="case-face face-side-back"></div>
+            <div class="case-face face-back"></div>
+            <div class="case-face face-top"></div>
+            <div class="case-face face-bottom"></div>
+            <div class="case-face face-front">
+              <div class="rgb-fan" id="fan-1"></div>
+              <div class="rgb-fan" id="fan-2"></div>
+              <div class="rgb-fan" id="fan-3"></div>
+            </div>
+            <!-- Internal 3D Components -->
+            <div class="part-3d p3d-mobo" id="3d-mobo"></div>
+            <div class="part-3d p3d-cpu" id="3d-cpu">CPU</div>
+            <div class="part-3d p3d-ram" id="3d-ram"></div>
+            <div class="part-3d p3d-ssd" id="3d-ssd">NVMe</div>
+            <div class="part-3d p3d-gpu" id="3d-gpu">GEFORCE / RADEON</div>
+            <div class="part-3d p3d-psu" id="3d-psu">PSU ⚡</div>
+            <div class="case-face face-glass"></div>
+            <!-- Floating 3D Monitor -->
+            <div class="mon-3d" id="3d-mon">180Hz IPS</div>
+          </div>
+        </div>
+        <div id="rig-status" style="font-size:11px;color:#38bdf8;font-weight:700;">Parts chunein aur unhe 3D Cabinet ke andar fit hote dekhein!</div>
       </div>
-      <div id="psu-rec" style="font-size:12px;color:#94a3b8;margin-bottom:16px;">Recommended PSU: Select parts</div>
 
-      <div class="slot-title" style="margin-bottom:8px;">🛍️ Your Selected Cart</div>
-      <div id="cart-list" style="font-size:13px;color:#94a3b8;margin-bottom:16px;">Abhi koi part select nahi kiya gaya hai.</div>
+      <!-- PRICE & ORDER SUMMARY -->
+      <div class="card">
+        <div style="font-size:12px;color:#94a3b8;text-transform:uppercase;">Total Build Cost</div>
+        <div class="total-num" id="grand-total">₹0</div>
+        <div style="font-size:12px;color:#64748b;margin-bottom:12px;">GST Included • Live 3D Sync Active</div>
 
-      <div class="slot-title" style="margin-bottom:8px;">🏪 Store-wise Total</div>
-      <div id="store-list" style="font-size:13px;color:#94a3b8;">No components selected.</div>
+        <button class="btn-success" onclick="openOrderModal()">🛒 Order Selected Parts</button>
+        <button class="btn-whatsapp" onclick="orderWhatsApp()">💬 Send Build Order on WhatsApp</button>
+
+        <hr style="border:0;border-top:1px solid #1f2937;margin:16px 0;">
+
+        <div class="slot-head">
+          <span class="slot-title">⚡ Estimated Wattage</span>
+          <span id="watt-total" style="color:#fbbf24;font-weight:800;">0W</span>
+        </div>
+        <div id="psu-rec" style="font-size:12px;color:#94a3b8;margin-bottom:16px;">Recommended PSU: Select parts</div>
+
+        <div class="slot-title" style="margin-bottom:8px;">🛍️ Your Selected Cart</div>
+        <div id="cart-list" style="font-size:13px;color:#94a3b8;margin-bottom:16px;">Abhi koi part select nahi kiya gaya hai.</div>
+
+        <div class="slot-title" style="margin-bottom:8px;">🏪 Store-wise Total</div>
+        <div id="store-list" style="font-size:13px;color:#94a3b8;">No components selected.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VIDEO / 3D SHOWCASE MODAL -->
+<div class="modal" id="video-modal">
+  <div class="modal-box">
+    <div class="slot-head" style="margin-bottom:12px;">
+      <span class="slot-title" id="vid-modal-title">🎬 Product 3D & Video Showcase</span>
+      <button onclick="closeVideoModal()">✕</button>
+    </div>
+    <div id="vid-stage" style="background:#090d16;border:1px solid #334155;border-radius:12px;padding:16px;text-align:center;margin-bottom:14px;"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <a id="yt-watch-btn" href="#" target="_blank" class="btn-video" style="flex:1;justify-content:center;padding:12px;font-size:13px;">▶️ Open Full Review Video on YouTube ↗</a>
     </div>
   </div>
 </div>
@@ -114,235 +233,18 @@
 </div>
 
 <script>
+// 3D SVG Icons per category
+const ICONS_3D = {
+  cpu: `<svg viewBox="0 0 64 64" fill="none"><rect x="14" y="14" width="36" height="36" rx="4" fill="#0284c7" stroke="#38bdf8" stroke-width="3"/><rect x="22" y="22" width="20" height="20" rx="2" fill="#e0f2fe"/><path d="M20 8v6M32 8v6M44 8v6M20 50v6M32 50v6M44 50v6M8 20h6M8 32h6M8 44h6M50 20h6M50 32h6M50 44h6" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/></svg>`,
+  mobo: `<svg viewBox="0 0 64 64" fill="none"><rect x="10" y="8" width="44" height="48" rx="4" fill="#1e1b4b" stroke="#818cf8" stroke-width="3"/><rect x="18" y="16" width="14" height="14" fill="#4f46e5" stroke="#a5b4fc" stroke-width="2"/><line x1="38" y1="16" x2="38" y2="34" stroke="#f43f5e" stroke-width="3"/><line x1="44" y1="16" x2="44" y2="34" stroke="#f43f5e" stroke-width="3"/><rect x="16" y="40" width="32" height="6" rx="2" fill="#10b981"/></svg>`,
+  ram: `<svg viewBox="0 0 64 64" fill="none"><rect x="8" y="20" width="48" height="22" rx="3" fill="#7c3aed" stroke="#c084fc" stroke-width="3"/><rect x="14" y="25" width="8" height="12" fill="#111827"/><rect x="28" y="25" width="8" height="12" fill="#111827"/><rect x="42" y="25" width="8" height="12" fill="#111827"/><path d="M12 42v4h40v-4" stroke="#fbbf24" stroke-width="3"/></svg>`,
+  ssd: `<svg viewBox="0 0 64 64" fill="none"><rect x="6" y="22" width="52" height="20" rx="3" fill="#065f46" stroke="#34d399" stroke-width="3"/><rect x="14" y="26" width="14" height="12" fill="#047857"/><circle cx="50" cy="32" r="3" fill="#fbbf24"/></svg>`,
+  gpu: `<svg viewBox="0 0 64 64" fill="none"><rect x="6" y="16" width="52" height="32" rx="5" fill="#064e3b" stroke="#10b981" stroke-width="3"/><circle cx="22" cy="32" r="10" fill="#047857" stroke="#6ee7b7" stroke-width="2"/><circle cx="44" cy="32" r="10" fill="#047857" stroke="#6ee7b7" stroke-width="2"/></svg>`,
+  psu: `<svg viewBox="0 0 64 64" fill="none"><rect x="10" y="14" width="44" height="36" rx="4" fill="#334155" stroke="#fbbf24" stroke-width="3"/><path d="M34 22L24 34h8l-2 10 10-12h-8l2-10z" fill="#fbbf24"/></svg>`,
+  cab: `<svg viewBox="0 0 64 64" fill="none"><rect x="16" y="6" width="32" height="52" rx="4" fill="#0f172a" stroke="#ec4899" stroke-width="3"/><circle cx="32" cy="20" r="6" stroke="#38bdf8" stroke-width="2"/><circle cx="32" cy="36" r="6" stroke="#ec4899" stroke-width="2"/></svg>`,
+  cool: `<svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/><circle cx="32" cy="32" r="8" fill="#0284c7"/><path d="M32 10v14M32 40v14M10 32h14M40 32h14" stroke="#67e8f9" stroke-width="3"/></svg>`,
+  mon: `<svg viewBox="0 0 64 64" fill="none"><rect x="8" y="10" width="48" height="32" rx="4" fill="#1e1b4b" stroke="#38bdf8" stroke-width="3"/><path d="M24 48h16M32 42v6" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/></svg>`
+};
+
 const CATALOG = [
-  { id: 'cpu', title: '🧠 1. Processor (CPU)', items: [
-    { name: 'AMD Ryzen 5 5600GT', price: 12199, watt: 65, store: 'Amazon', url: 'https://www.amazon.in/s?k=AMD+Ryzen+5+5600GT' },
-    { name: 'AMD Ryzen 5 5600X', price: 13499, watt: 65, store: 'Flipkart', url: 'https://www.flipkart.com/search?q=AMD+Ryzen+5+5600X' },
-    { name: 'Intel Core i5-12400F', price: 9899, watt: 65, store: 'Amazon', url: 'https://www.amazon.in/s?k=Intel+Core+i5+12400F' },
-    { name: 'AMD Ryzen 5 7600X', price: 19499, watt: 105, store: 'MDComputers', url: 'https://mdcomputers.in/?route=product/search&search=Ryzen+5+7600X' }
-  ]},
-  { id: 'mobo', title: '🎛️ 2. Motherboard', items: [
-    { name: 'Gigabyte B550 AORUS Elite V2', price: 12899, watt: 35, store: 'Amazon', url: 'https://www.amazon.in/s?k=Gigabyte+B550+AORUS+Elite+V2' },
-    { name: 'MSI B550M PRO-VDH WiFi', price: 9499, watt: 30, store: 'Flipkart', url: 'https://www.flipkart.com/search?q=MSI+B550M+PRO-VDH+WiFi' },
-    { name: 'ASUS Prime B660M-A D4', price: 10999, watt: 35, store: 'Amazon', url: 'https://www.amazon.in/s?k=ASUS+Prime+B660M-A+D4' },
-    { name: 'MSI PRO B650M-A WiFi', price: 14999, watt: 40, store: 'Vedant', url: 'https://www.vedantcomputers.com/index.php?route=product/search&search=MSI+PRO+B650M-A+WiFi' }
-  ]},
-  { id: 'ram', title: '⚡ 3. Memory (RAM)', items: [
-    { name: 'Corsair Vengeance 16GB DDR4', price: 3499, watt: 10, store: 'Amazon', url: 'https://www.amazon.in/s?k=Corsair+Vengeance+16GB+DDR4' },
-    { name: 'XPG ADATA GAMMIX 8GB DDR4', price: 1699, watt: 6, store: 'Flipkart', url: 'https://www.flipkart.com/search?q=XPG+ADATA+GAMMIX+8GB+DDR4' },
-    { name: 'G.Skill Ripjaws 16GB DDR5', price: 4799, watt: 12, store: 'Amazon', url: 'https://www.amazon.in/s?k=G.Skill+Ripjaws+16GB+DDR5' }
-  ]},
-  { id: 'ssd', title: '💾 4. Storage (SSD)', items: [
-    { name: 'WD Blue SN580 1TB NVMe SSD', price: 5699, watt: 8, store: 'Amazon', url: 'https://www.amazon.in/s?k=WD+Blue+SN580+1TB+NVMe' },
-    { name: 'Crucial P3 Plus 500GB NVMe', price: 3399, watt: 8, store: 'Flipkart', url: 'https://www.flipkart.com/search?q=Crucial+P3+Plus+500GB+NVMe' },
-    { name: 'Kingston NV2 1TB M.2 SSD', price: 5199, watt: 8, store: 'Amazon', url: 'https://www.amazon.in/s?k=Kingston+NV2+1TB+M.2' }
-  ]},
-  { id: 'gpu', title: '🎮 5. Graphics Card (GPU)', items: [
-    { name: 'Integrated Graphics (Built-in)', price: 0, watt: 0, store: 'Built-in', url: '' },
-    { name: 'AMD Radeon RX 6600 8GB', price: 19899, watt: 132, store: 'Amazon', url: 'https://www.amazon.in/s?k=AMD+Radeon+RX+6600+8GB' },
-    { name: 'NVIDIA RTX 3060 12GB', price: 24999, watt: 170, store: 'Flipkart', url: 'https://www.flipkart.com/search?q=NVIDIA+RTX+3060+12GB' },
-    { name: 'NVIDIA RTX 4060 8GB', price: 27999, watt: 115, store: 'Amazon', url: 'https://www.amazon.in/s?k=NVIDIA+RTX+4060+8GB' }
-  ]},
-  { id: 'psu', title: '🔌 6. Power Supply (PSU)', items: [
-    { name: 'Deepcool PK550D 550W', price: 3599, watt: 0, store: 'Amazon', url: 'https://www.amazon.in/s?k=Deepcool+PK550D+550W' },
-    { name: 'Cooler Master 650W V2', price: 5199, watt: 0, store: 'Flipkart', url: 'https://www.flipkart.com/search?q=Cooler+Master+650W+V2' },
-    { name: 'Corsair RM750e 750W Gold', price: 8999, watt: 0, store: 'Amazon', url: 'https://www.amazon.in/s?k=Corsair+RM750e+750W+Gold' }
-  ]},
-  { id: 'cab', title: '🖥️ 7. Cabinet', items: [
-    { name: 'Ant Esports ICE-112 Case', price: 3199, watt: 10, store: 'Amazon', url: 'https://www.amazon.in/s?k=Ant+Esports+ICE-112+Cabinet' },
-    { name: 'Galax Revolution 05 RGB', price: 3799, watt: 15, store: 'Flipkart', url: 'https://www.flipkart.com/search?q=Galax+Revolution+05+RGB+Cabinet' }
-  ]},
-  { id: 'cool', title: '❄️ 8. CPU Cooler', items: [
-    { name: 'Box Stock Cooler', price: 0, watt: 5, store: 'Built-in', url: '' },
-    { name: 'Deepcool AG400 Air Cooler', price: 1899, watt: 10, store: 'Amazon', url: 'https://www.amazon.in/s?k=Deepcool+AG400+Air+Cooler' },
-    { name: 'Cooler Master ML240L Liquid', price: 5999, watt: 20, store: 'Flipkart', url: 'https://www.flipkart.com/search?q=Cooler+Master+ML240L+Liquid+Cooler' }
-  ]},
-  { id: 'mon', title: '📺 9. Monitor', items: [
-    { name: 'LG Ultragear 24" 180Hz IPS', price: 10499, watt: 30, store: 'Amazon', url: 'https://www.amazon.in/s?k=LG+Ultragear+24+180Hz+IPS' },
-    { name: 'Acer Nitro 23.8" 180Hz', price: 8999, watt: 28, store: 'Flipkart', url: 'https://www.flipkart.com/search?q=Acer+Nitro+23.8+180Hz+Monitor' }
-  ]}
-];
-
-let selectedItems = [];
-
-function initUI() {
-  const container = document.getElementById('builder-list');
-  const mCat = document.getElementById('m-cat');
-  let html = '';
-  let catOpts = '';
-
-  CATALOG.forEach(cat => {
-    catOpts += `<option value="${cat.id}">${cat.title}</option>`;
-    const opts = cat.items.map((item, i) => 
-      `<option value="${i}">${item.name} — ₹${item.price.toLocaleString('en-IN')} (${item.store})</option>`
-    ).join('');
-
-    html += `
-      <div class="card">
-        <div class="slot-head">
-          <span class="slot-title">${cat.title}</span>
-          <div>
-            <span class="slot-price" id="price-${cat.id}">₹0</span>
-            <a id="link-${cat.id}" class="buy-link" target="_blank">🛒 Buy Now ↗</a>
-          </div>
-        </div>
-        <div class="row">
-          <select id="sel-${cat.id}" onchange="calc()">
-            <option value="-1">-- Select ${cat.title.split('. ')[1]} --</option>
-            ${opts}
-          </select>
-          <button onclick="openModal('${cat.id}')">+ Link</button>
-        </div>
-      </div>
-    `;
-  });
-
-  container.innerHTML = html;
-  mCat.innerHTML = catOpts;
-}
-
-function calc() {
-  let total = 0, watts = 0, stores = {};
-  selectedItems = [];
-
-  CATALOG.forEach(cat => {
-    const sel = document.getElementById('sel-' + cat.id);
-    if (!sel) return;
-    const itemIdx = parseInt(sel.value, 10);
-    const priceEl = document.getElementById('price-' + cat.id);
-    const linkEl = document.getElementById('link-' + cat.id);
-
-    if (isNaN(itemIdx) || itemIdx < 0 || !cat.items[itemIdx]) {
-      priceEl.textContent = '₹0';
-      linkEl.classList.remove('show');
-      return;
-    }
-
-    const item = cat.items[itemIdx];
-    priceEl.textContent = '₹' + item.price.toLocaleString('en-IN');
-
-    if (item.url) {
-      linkEl.href = item.url;
-      linkEl.classList.add('show');
-    } else {
-      linkEl.classList.remove('show');
-    }
-
-    total += item.price;
-    watts += item.watt;
-    if (item.price > 0) {
-      stores[item.store] = (stores[item.store] || 0) + item.price;
-    }
-    selectedItems.push(item);
-  });
-
-  document.getElementById('grand-total').textContent = '₹' + total.toLocaleString('en-IN');
-  document.getElementById('watt-total').textContent = watts + 'W';
-  document.getElementById('psu-rec').textContent = watts > 0 ? 'Recommended PSU: Min ' + (Math.ceil((watts + 150)/50)*50) + 'W' : 'Recommended PSU: Select parts';
-
-  const cartEl = document.getElementById('cart-list');
-  if (selectedItems.length === 0) {
-    cartEl.innerHTML = 'Abhi koi part select nahi kiya gaya hai.';
-  } else {
-    cartEl.innerHTML = selectedItems.map(item => `
-      <div class="cart-item">
-        <div class="cart-item-name">${item.name}<br><span style="color:#34d399;font-weight:700;">₹${item.price.toLocaleString('en-IN')}</span> <span style="color:#64748b;">(${item.store})</span></div>
-        ${item.url ? `<a href="${item.url}" target="_blank" class="cart-buy-btn">Buy ↗</a>` : `<span style="font-size:11px;color:#64748b;">Included</span>`}
-      </div>
-    `).join('');
-  }
-
-  const stKeys = Object.keys(stores);
-  document.getElementById('store-list').innerHTML = stKeys.length ? stKeys.map(k => `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1f2937;"><span>${k}</span><strong style="color:#34d399;">₹${stores[k].toLocaleString('en-IN')}</strong></div>`).join('') : 'No components selected.';
-}
-
-function openModal(catId) {
-  document.getElementById('m-cat').value = catId || 'cpu';
-  document.getElementById('m-url').value = '';
-  document.getElementById('m-name').value = '';
-  document.getElementById('m-price').value = '';
-  document.getElementById('modal').classList.add('open');
-}
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-
-function addCustom() {
-  const catId = document.getElementById('m-cat').value;
-  const name = document.getElementById('m-name').value || 'Custom Part';
-  const price = Number(document.getElementById('m-price').value) || 0;
-  const store = document.getElementById('m-store').value;
-  const url = document.getElementById('m-url').value || `https://www.amazon.in/s?k=${encodeURIComponent(name)}`;
-
-  const catObj = CATALOG.find(c => c.id === catId);
-  if (!catObj) return;
-
-  const newIdx = catObj.items.length;
-  catObj.items.push({ name, price, watt: 35, store, url });
-
-  const sel = document.getElementById('sel-' + catId);
-  const opt = document.createElement('option');
-  opt.value = String(newIdx);
-  opt.textContent = `${name} — ₹${price.toLocaleString('en-IN')} (${store})`;
-  sel.appendChild(opt);
-  sel.value = String(newIdx);
-
-  closeModal();
-  calc();
-}
-
-function openOrderModal() {
-  if (selectedItems.length === 0) { alert('Pehle kam se kam 1 PC part select karein!'); return; }
-  const listEl = document.getElementById('order-modal-list');
-  listEl.innerHTML = selectedItems.map(item => `
-    <div class="cart-item">
-      <div class="cart-item-name">${item.name}<br><span style="color:#34d399;font-weight:700;">₹${item.price.toLocaleString('en-IN')}</span> • <span style="color:#94a3b8;">${item.store}</span></div>
-      ${item.url ? `<a href="${item.url}" target="_blank" class="cart-buy-btn" style="background:#059669;padding:7px 12px;">🛒 Order on ${item.store} ↗</a>` : `<span style="color:#64748b;">Built-in</span>`}
-    </div>
-  `).join('');
-  document.getElementById('order-modal-total').textContent = document.getElementById('grand-total').textContent;
-  document.getElementById('order-modal').classList.add('open');
-}
-function closeOrderModal() { document.getElementById('order-modal').classList.remove('open'); }
-
-function openAllLinks() {
-  const links = selectedItems.filter(i => i.url);
-  if (!links.length) { alert('Koi store link available nahi hai.'); return; }
-  links.forEach(item => window.open(item.url, '_blank'));
-}
-
-function orderWhatsApp() {
-  if (!selectedItems.length) { alert('Pehle apne PC parts select karein!'); return; }
-  let msg = '🛒 *My Custom PC Build Order*\n\n';
-  selectedItems.forEach((item, idx) => {
-    msg += `${idx + 1}. *${item.name}* — ₹${item.price.toLocaleString('en-IN')} (${item.store})\n`;
-    if (item.url) msg += `   Link: ${item.url}\n`;
-  });
-  msg += `\n⚡ *Estimated Wattage:* ${document.getElementById('watt-total').textContent}`;
-  msg += `\n💰 *Total Build Cost:* ${document.getElementById('grand-total').textContent}`;
-  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
-}
-
-function resetAll() {
-  CATALOG.forEach(cat => {
-    const sel = document.getElementById('sel-' + cat.id);
-    if (sel) sel.value = "-1";
-  });
-  calc();
-}
-
-function copyBuild() {
-  if (!selectedItems.length) { alert('Pehle kuch parts select karein!'); return; }
-  let txt = '🖥️ My Custom PC Build:\n';
-  selectedItems.forEach(item => { txt += `• ${item.name} — ₹${item.price.toLocaleString('en-IN')} (${item.store})\n`; });
-  txt += '\nTotal: ' + document.getElementById('grand-total').textContent;
-  navigator.clipboard.writeText(txt);
-  alert('Build copied!');
-}
-
-initUI();
-calc();
-// Auto-scanner: checks every 300ms on mobile
-setInterval(calc, 300);
-</script>
-</body>
-</html>
-
+  { id: 'c
