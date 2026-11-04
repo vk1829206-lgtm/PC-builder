@@ -291,4 +291,320 @@
 
     <!-- 9. Monitor -->
     <div class="card">
-      <div class
+      <div class="slot-head">
+        <span class="slot-title">📺 9. Monitor</span>
+        <div><span class="slot-price" id="price-mon">₹0</span><a id="link-mon" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
+      </div>
+      <div class="row">
+        <select id="sel-mon" onchange="calc()">
+          <option value="0|0||">-- Monitor Chunein --</option>
+          <option value="10499|30|Amazon|https://www.amazon.in/s?k=LG+Ultragear+24+180Hz+IPS">LG Ultragear 24" 180Hz IPS — ₹10,499 (Amazon)</option>
+          <option value="8999|28|Flipkart|https://www.flipkart.com/search?q=Acer+Nitro+23.8+180Hz+Monitor">Acer Nitro 23.8" 180Hz — ₹8,999 (Flipkart)</option>
+        </select>
+        <button onclick="openModal('mon')">+ Link</button>
+      </div>
+      <div class="preview-3d-box" id="prev-mon">
+        <div class="holo-icon">📺</div>
+        <div class="preview-info">
+          <div class="preview-name" id="pname-mon">Monitor</div>
+          <a id="vid-mon" href="#" target="_blank" class="btn-video">▶️ Watch 3D / Review Video ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDE: 3D VIRTUAL CABINET & TOTAL COST -->
+  <div>
+    <div style="position: sticky; top: 70px;">
+      <div class="rig-stage-wrap">
+        <div class="rig-stage-head">
+          <span>🎮 <b>Interactive 3D Virtual Rig</b></span>
+          <button onclick="autoRotateToggle()" style="padding:3px 8px;font-size:10px;">🔄 Auto-Spin</button>
+        </div>
+        <div class="scene-3d" id="scene-3d">
+          <div class="pc-rig-3d" id="pc-rig">
+            <div class="case-face face-side-back"></div>
+            <div class="case-face face-back"></div>
+            <div class="case-face face-top"></div>
+            <div class="case-face face-bottom"></div>
+            <div class="case-face face-front">
+              <div class="rgb-fan" id="fan-1"></div>
+              <div class="rgb-fan" id="fan-2"></div>
+              <div class="rgb-fan" id="fan-3"></div>
+            </div>
+            <div class="part-3d p3d-mobo" id="3d-mobo"></div>
+            <div class="part-3d p3d-cpu" id="3d-cpu">CPU</div>
+            <div class="part-3d p3d-ram" id="3d-ram"></div>
+            <div class="part-3d p3d-ssd" id="3d-ssd">NVMe</div>
+            <div class="part-3d p3d-gpu" id="3d-gpu">RTX / RX</div>
+            <div class="part-3d p3d-psu" id="3d-psu">PSU ⚡</div>
+            <div class="case-face face-glass"></div>
+            <div class="mon-3d" id="3d-mon">180Hz IPS</div>
+          </div>
+        </div>
+        <div id="rig-status" style="font-size:11px;color:#38bdf8;font-weight:700;">Upar se parts select karein aur 3D Rig mein fit hote dekhein!</div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px;color:#94a3b8;text-transform:uppercase;">Total Build Cost</div>
+        <div class="total-num" id="grand-total">₹0</div>
+        <div style="font-size:12px;color:#64748b;margin-bottom:12px;">GST Included • Live 3D Sync Active</div>
+
+        <button class="btn-success" onclick="openOrderModal()">🛒 Order Selected Parts</button>
+        <button class="btn-whatsapp" onclick="orderWhatsApp()">💬 Send Build Order on WhatsApp</button>
+
+        <hr style="border:0;border-top:1px solid #1f2937;margin:16px 0;">
+
+        <div class="slot-head">
+          <span class="slot-title">⚡ Estimated Wattage</span>
+          <span id="watt-total" style="color:#fbbf24;font-weight:800;">0W</span>
+        </div>
+        <div id="psu-rec" style="font-size:12px;color:#94a3b8;margin-bottom:16px;">Recommended PSU: Select parts</div>
+
+        <div class="slot-title" style="margin-bottom:8px;">🛍️ Your Selected Cart</div>
+        <div id="cart-list" style="font-size:13px;color:#94a3b8;margin-bottom:16px;">Abhi koi part select nahi kiya gaya hai.</div>
+
+        <div class="slot-title" style="margin-bottom:8px;">🏪 Store-wise Total</div>
+        <div id="store-list" style="font-size:13px;color:#94a3b8;">No components selected.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD CUSTOM MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="slot-head" style="margin-bottom:14px;">
+      <span class="slot-title">🔗 Add Custom Product</span>
+      <button onclick="closeModal()">✕</button>
+    </div>
+    <div class="field"><label>Category</label>
+      <select id="m-cat">
+        <option value="cpu">CPU</option><option value="mobo">Motherboard</option><option value="ram">RAM</option><option value="ssd">Storage</option><option value="gpu">GPU</option><option value="psu">PSU</option><option value="cab">Cabinet</option><option value="cool">Cooler</option><option value="mon">Monitor</option>
+      </select>
+    </div>
+    <div class="field"><label>Product Buy Link</label><input type="url" id="m-url" placeholder="https://www.amazon.in/..."></div>
+    <div class="field"><label>Component Name</label><input type="text" id="m-name" placeholder="e.g. Ryzen 5 5600GT"></div>
+    <div class="field"><label>Price (₹)</label><input type="number" id="m-price" placeholder="12000"></div>
+    <div class="field"><label>Store</label>
+      <select id="m-store"><option value="Amazon">Amazon</option><option value="Flipkart">Flipkart</option><option value="MDComputers">MDComputers</option><option value="Vedant">Vedant</option></select>
+    </div>
+    <button class="btn-primary" style="width:100%;padding:12px;" onclick="addCustom()">Add & Select Component</button>
+  </div>
+</div>
+
+<!-- ORDER MODAL -->
+<div class="modal" id="order-modal">
+  <div class="modal-box">
+    <div class="slot-head" style="margin-bottom:12px;">
+      <span class="slot-title" style="font-size:17px;">🛒 Complete Your PC Order</span>
+      <button onclick="closeOrderModal()">✕</button>
+    </div>
+    <div id="order-modal-list" style="max-height:260px;overflow-y:auto;margin-bottom:14px;border:1px solid #1f2937;border-radius:10px;padding:10px;background:#0b0f19;"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid #1f2937;margin-bottom:10px;">
+      <span style="font-size:14px;font-weight:700;">Grand Total:</span>
+      <span id="order-modal-total" style="font-size:20px;font-weight:900;color:#34d399;">₹0</span>
+    </div>
+    <button class="btn-primary" style="width:100%;padding:12px;margin-bottom:8px;" onclick="openAllLinks()">🚀 Open All Store Links at Once</button>
+    <button class="btn-whatsapp" onclick="orderWhatsApp()">💬 Share / Order via WhatsApp</button>
+  </div>
+</div>
+
+<script>
+const IDS = ['cpu','mobo','ram','ssd','gpu','psu','cab','cool','mon'];
+let selectedItems = [];
+
+function calc() {
+  let total = 0, watts = 0, stores = {};
+  selectedItems = [];
+
+  IDS.forEach(id => {
+    const sel = document.getElementById('sel-' + id);
+    if (!sel) return;
+    const idx = sel.selectedIndex;
+    const opt = sel.options[idx];
+    const priceEl = document.getElementById('price-' + id);
+    const linkEl = document.getElementById('link-' + id);
+    const prevBox = document.getElementById('prev-' + id);
+
+    if (idx <= 0 || !opt) {
+      priceEl.textContent = '₹0';
+      linkEl.classList.remove('show');
+      prevBox.classList.remove('active');
+      update3DRig(id, false);
+      return;
+    }
+
+    const parts = (opt.value || '').split('|');
+    let p = Number(parts[0]) || 0;
+    if (p === 0) {
+      const m = (opt.text || '').match(/₹\s*([\d,]+)/);
+      if (m && m[1]) p = Number(m[1].replace(/,/g, '')) || 0;
+    }
+    const w = Number(parts[1]) || 15;
+    const s = parts[2] || 'Store';
+    const u = parts[3] || '';
+    const itemName = (opt.text || '').split(' — ')[0].trim();
+
+    priceEl.textContent = '₹' + p.toLocaleString('en-IN');
+
+    if (u) {
+      linkEl.href = u;
+      linkEl.classList.add('show');
+    } else {
+      linkEl.classList.remove('show');
+    }
+
+    // Show 3D Hologram Card & YouTube Video Link
+    document.getElementById('pname-' + id).textContent = itemName;
+    document.getElementById('vid-' + id).href = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(itemName + ' unboxing review 3d');
+    prevBox.classList.add('active');
+    update3DRig(id, true);
+
+    total += p;
+    watts += w;
+    if (p > 0) stores[s] = (stores[s] || 0) + p;
+    selectedItems.push({ id, name: itemName, price: p, store: s, url: u });
+  });
+
+  document.getElementById('grand-total').textContent = '₹' + total.toLocaleString('en-IN');
+  document.getElementById('watt-total').textContent = watts + 'W';
+  document.getElementById('psu-rec').textContent = watts > 0 ? 'Recommended PSU: Min ' + (Math.ceil((watts + 150)/50)*50) + 'W' : 'Recommended PSU: Select parts';
+  document.getElementById('rig-status').textContent = selectedItems.length > 0 
+    ? `✅ ${selectedItems.length}/9 Parts Installed in 3D Rig!` 
+    : 'Upar se parts select karein aur 3D Rig mein fit hote dekhein!';
+
+  const cartEl = document.getElementById('cart-list');
+  if (selectedItems.length === 0) {
+    cartEl.innerHTML = 'Abhi koi part select nahi kiya gaya hai.';
+  } else {
+    cartEl.innerHTML = selectedItems.map(item => `
+      <div class="cart-item">
+        <div class="cart-item-name">${item.name}<br><span style="color:#34d399;font-weight:700;">₹${item.price.toLocaleString('en-IN')}</span> <span style="color:#64748b;">(${item.store})</span></div>
+        ${item.url ? `<a href="${item.url}" target="_blank" class="cart-buy-btn">Buy ↗</a>` : `<span style="font-size:11px;color:#64748b;">Included</span>`}
+      </div>
+    `).join('');
+  }
+
+  const stKeys = Object.keys(stores);
+  document.getElementById('store-list').innerHTML = stKeys.length ? stKeys.map(k => `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1f2937;"><span>${k}</span><strong style="color:#34d399;">₹${stores[k].toLocaleString('en-IN')}</strong></div>`).join('') : 'No components selected.';
+}
+
+function update3DRig(id, installed) {
+  if (id === 'cab' || id === 'cool') {
+    ['fan-1','fan-2','fan-3'].forEach(f => {
+      const el = document.getElementById(f);
+      if (el) el.classList.toggle('on', installed);
+    });
+  }
+  const el = document.getElementById('3d-' + id);
+  if (el) el.classList.toggle('installed', installed);
+}
+
+// 3D Rotation Logic
+let rotY = -28, rotX = -12, isDragging = false, startX = 0, startY = 0, autoSpin = true;
+const sceneEl = document.getElementById('scene-3d');
+const rigEl = document.getElementById('pc-rig');
+
+function renderRigAngle() {
+  rigEl.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+}
+sceneEl.addEventListener('pointerdown', e => { isDragging = true; autoSpin = false; startX = e.clientX; startY = e.clientY; });
+window.addEventListener('pointermove', e => {
+  if (!isDragging) return;
+  rotY += (e.clientX - startX) * 0.6;
+  rotX -= (e.clientY - startY) * 0.4;
+  rotX = Math.max(-40, Math.min(25, rotX));
+  startX = e.clientX; startY = e.clientY;
+  renderRigAngle();
+});
+window.addEventListener('pointerup', () => { isDragging = false; });
+function autoRotateToggle() { autoSpin = !autoSpin; }
+
+setInterval(() => {
+  if (autoSpin && !isDragging) {
+    rotY = (rotY + 0.8) % 360;
+    renderRigAngle();
+  }
+}, 40);
+
+function openModal(cat) {
+  document.getElementById('m-cat').value = cat || 'cpu';
+  document.getElementById('m-url').value = '';
+  document.getElementById('m-name').value = '';
+  document.getElementById('m-price').value = '';
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+function addCustom() {
+  const cat = document.getElementById('m-cat').value;
+  const name = document.getElementById('m-name').value || 'Custom Part';
+  const price = Number(document.getElementById('m-price').value) || 0;
+  const store = document.getElementById('m-store').value;
+  const url = document.getElementById('m-url').value || `https://www.amazon.in/s?k=${encodeURIComponent(name)}`;
+
+  const sel = document.getElementById('sel-' + cat);
+  const opt = document.createElement('option');
+  opt.value = `${price}|35|${store}|${url}`;
+  opt.textContent = `${name} — ₹${price.toLocaleString('en-IN')} (${store})`;
+  sel.appendChild(opt);
+  sel.selectedIndex = sel.options.length - 1;
+  closeModal();
+  calc();
+}
+
+function openOrderModal() {
+  if (selectedItems.length === 0) { alert('Pehle kam se kam 1 PC part select karein!'); return; }
+  const listEl = document.getElementById('order-modal-list');
+  listEl.innerHTML = selectedItems.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-name">${item.name}<br><span style="color:#34d399;font-weight:700;">₹${item.price.toLocaleString('en-IN')}</span> • <span style="color:#94a3b8;">${item.store}</span></div>
+      ${item.url ? `<a href="${item.url}" target="_blank" class="cart-buy-btn" style="background:#059669;padding:7px 12px;">🛒 Order on ${item.store} ↗</a>` : `<span style="color:#64748b;">Built-in</span>`}
+    </div>
+  `).join('');
+  document.getElementById('order-modal-total').textContent = document.getElementById('grand-total').textContent;
+  document.getElementById('order-modal').classList.add('open');
+}
+function closeOrderModal() { document.getElementById('order-modal').classList.remove('open'); }
+
+function openAllLinks() {
+  const links = selectedItems.filter(i => i.url);
+  if (!links.length) { alert('Koi store link available nahi hai.'); return; }
+  links.forEach(item => window.open(item.url, '_blank'));
+}
+
+function orderWhatsApp() {
+  if (!selectedItems.length) { alert('Pehle apne PC parts select karein!'); return; }
+  let msg = '🛒 *My Custom 3D PC Build Order*\n\n';
+  selectedItems.forEach((item, idx) => {
+    msg += `${idx + 1}. *${item.name}* — ₹${item.price.toLocaleString('en-IN')} (${item.store})\n`;
+    if (item.url) msg += `   Link: ${item.url}\n`;
+  });
+  msg += `\n⚡ *Estimated Wattage:* ${document.getElementById('watt-total').textContent}`;
+  msg += `\n💰 *Total Build Cost:* ${document.getElementById('grand-total').textContent}`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function resetAll() {
+  IDS.forEach(id => {
+    const sel = document.getElementById('sel-' + id);
+    if (sel) sel.selectedIndex = 0;
+  });
+  calc();
+}
+
+function copyBuild() {
+  if (!selectedItems.length) { alert('Pehle kuch parts select karein!'); return; }
+  let txt = '🖥️ My Custom PC Build:\n';
+  selectedItems.forEach(item => { txt += `• ${item.name} — ₹${item.price.toLocaleString('en-IN')} (${item.store})\n`; });
+  txt += '\nTotal: ' + document.getElementById('grand-total').textContent;
+  navigator.clipboard.writeText(txt);
+  alert('Build copied!');
+}
+
+calc();
+setInterval(calc, 350);
+</script>
+</body>
+</html>
