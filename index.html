@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RigCrafter India - v6.0 3D + Direct Parts</title>
+<title>RigCrafter India - Only 3D View Edition</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
   body { background: #070b14; color: #e2e8f0; padding-bottom: 60px; overflow-x: hidden; }
   .nav { background: #111827; border-bottom: 1px solid #1f2937; padding: 12px 16px; position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
   .logo { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
-  .badge { font-size: 11px; background: linear-gradient(90deg, #059669, #10b981); color: #fff; padding: 3px 10px; border-radius: 99px; font-weight: 800; }
+  .badge { font-size: 11px; background: linear-gradient(90deg, #0284c7, #6366f1); color: #fff; padding: 3px 10px; border-radius: 99px; font-weight: 800; }
   .btns { display: flex; gap: 8px; flex-wrap: wrap; }
   button { cursor: pointer; border: none; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 600; color: #fff; background: #1f2937; border: 1px solid #374151; }
   .btn-primary { background: #4f46e5; border-color: #6366f1; }
@@ -31,14 +31,20 @@
   .buy-link { display: none; font-size: 12px; background: #065f46; color: #6ee7b7; padding: 4px 10px; border-radius: 8px; text-decoration: none; font-weight: 700; margin-left: 8px; border: 1px solid #059669; }
   .buy-link.show { display: inline-block; }
 
-  /* 3D Component Preview Box inside each slot */
-  .preview-3d-box { display: none; margin-top: 12px; background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%); border: 1px solid #38bdf8; border-radius: 12px; padding: 12px; align-items: center; justify-content: space-between; gap: 12px; }
+  /* ONLY 3D IMAGE PREVIEW BOX inside each slot */
+  .preview-3d-box { display: none; margin-top: 12px; background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%); border: 1px solid #38bdf8; border-radius: 12px; padding: 12px; align-items: center; justify-content: space-between; gap: 14px; perspective: 800px; }
   .preview-3d-box.active { display: flex; flex-wrap: wrap; }
-  .holo-icon { width: 64px; height: 64px; border-radius: 12px; background: rgba(2,132,199,0.2); border: 1px solid #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 30px; animation: float3d 2.5s ease-in-out infinite; box-shadow: 0 0 15px rgba(56,189,248,0.35); }
-  @keyframes float3d { 0%, 100% { transform: translateY(0px) rotateY(-12deg); } 50% { transform: translateY(-5px) rotateY(12deg); } }
+  .holo-icon { width: 82px; height: 82px; border-radius: 14px; background: linear-gradient(135deg, rgba(2,132,199,0.28), rgba(99,102,241,0.28)); border: 2px solid #38bdf8; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 36px; transform-style: preserve-3d; animation: float3d 2.8s ease-in-out infinite; box-shadow: 0 8px 22px rgba(56,189,248,0.35); cursor: pointer; }
+  .holo-icon.spin360 { animation: fullSpin 1.2s linear infinite; }
+  @keyframes float3d { 0%, 100% { transform: translateY(0px) rotateY(-18deg) rotateX(10deg); } 50% { transform: translateY(-5px) rotateY(18deg) rotateX(-10deg); } }
+  @keyframes fullSpin { 0% { transform: rotateY(0deg) rotateX(8deg); } 100% { transform: rotateY(360deg) rotateX(8deg); } }
+  .holo-label { font-size: 9px; background: #0284c7; color: #fff; padding: 1px 6px; border-radius: 99px; font-weight: 800; margin-top: 3px; }
+  
   .preview-info { flex: 1; min-width: 160px; }
-  .preview-name { font-size: 14px; font-weight: 800; color: #fff; margin-bottom: 4px; }
-  .btn-video { background: #dc2626; color: #fff; text-decoration: none; padding: 6px 11px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-block; margin-top: 4px; }
+  .preview-name { font-size: 14px; font-weight: 800; color: #fff; margin-bottom: 3px; }
+  .preview-tag { font-size: 11px; color: #38bdf8; margin-bottom: 8px; font-weight: 600; }
+  .btn-3d-action { background: #0284c7; border: 1px solid #38bdf8; color: #fff; padding: 6px 11px; border-radius: 8px; font-size: 11px; font-weight: 700; margin-right: 6px; }
+  .btn-3d-spin { background: #312e81; border: 1px solid #6366f1; color: #fff; padding: 6px 11px; border-radius: 8px; font-size: 11px; font-weight: 700; }
 
   /* INTERACTIVE 3D PC CABINET STAGE */
   .rig-stage-wrap { background: radial-gradient(circle at 50% 35%, #1e1b4b 0%, #090d16 75%); border: 1px solid #312e81; border-radius: 16px; padding: 14px; margin-bottom: 14px; text-align: center; }
@@ -78,12 +84,16 @@
   .modal-box { background: #111827; border: 1px solid #374151; border-radius: 16px; width: 100%; max-width: 480px; padding: 18px; max-height: 90vh; overflow-y: auto; }
   .field { margin-bottom: 12px; }
   .field label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+
+  /* 360 3D Modal Viewer */
+  .viewer-3d-stage { height: 220px; background: radial-gradient(circle, #1e293b 0%, #070b14 80%); border: 1px solid #38bdf8; border-radius: 14px; display: flex; align-items: center; justify-content: center; perspective: 900px; cursor: grab; user-select: none; touch-action: none; margin-bottom: 12px; }
+  .viewer-3d-cube { width: 130px; height: 130px; border-radius: 22px; background: linear-gradient(135deg, rgba(2,132,199,0.35), rgba(124,58,237,0.35)); border: 2px solid #38bdf8; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 56px; transform-style: preserve-3d; box-shadow: 0 0 35px rgba(56,189,248,0.45); }
 </style>
 </head>
 <body>
 
 <div class="nav">
-  <div class="logo">⚡ RigCrafter <span class="badge">v6.0 FULL PARTS + 3D</span></div>
+  <div class="logo">⚡ RigCrafter <span class="badge">ONLY 3D VIEW</span></div>
   <div class="btns">
     <button class="btn-primary" onclick="openModal('cpu')">+ Add Custom Part</button>
     <button onclick="openOrderModal()" style="background:#059669;border-color:#10b981;">🛒 Order Now</button>
@@ -93,7 +103,7 @@
 </div>
 
 <div class="container">
-  <!-- LEFT SIDE: HARDCODED 9 PART SELECTORS (ALWAYS VISIBLE) -->
+  <!-- LEFT SIDE: HARDCODED 9 PART SELECTORS (ONLY 3D VIEW, NO VIDEO) -->
   <div>
     <!-- 1. CPU -->
     <div class="card">
@@ -112,10 +122,12 @@
         <button onclick="openModal('cpu')">+ Link</button>
       </div>
       <div class="preview-3d-box" id="prev-cpu">
-        <div class="holo-icon">🧠</div>
+        <div class="holo-icon" id="icon-cpu" onclick="open3DViewer('cpu', '🧠')">🧠<span class="holo-label">3D MODEL</span></div>
         <div class="preview-info">
           <div class="preview-name" id="pname-cpu">Processor</div>
-          <a id="vid-cpu" href="#" target="_blank" class="btn-video">▶️ Watch 3D / Review Video ↗</a>
+          <div class="preview-tag">🧊 Interactive 3D Model View</div>
+          <button class="btn-3d-action" onclick="open3DViewer('cpu', '🧠')">🔍 360° 3D View</button>
+          <button class="btn-3d-spin" onclick="spinIcon('cpu')">🔄 Spin 3D</button>
         </div>
       </div>
     </div>
@@ -137,10 +149,12 @@
         <button onclick="openModal('mobo')">+ Link</button>
       </div>
       <div class="preview-3d-box" id="prev-mobo">
-        <div class="holo-icon">🎛️</div>
+        <div class="holo-icon" id="icon-mobo" onclick="open3DViewer('mobo', '🎛️')">🎛️<span class="holo-label">3D MODEL</span></div>
         <div class="preview-info">
           <div class="preview-name" id="pname-mobo">Motherboard</div>
-          <a id="vid-mobo" href="#" target="_blank" class="btn-video">▶️ Watch 3D / Review Video ↗</a>
+          <div class="preview-tag">🧊 Interactive 3D Model View</div>
+          <button class="btn-3d-action" onclick="open3DViewer('mobo', '🎛️')">🔍 360° 3D View</button>
+          <button class="btn-3d-spin" onclick="spinIcon('mobo')">🔄 Spin 3D</button>
         </div>
       </div>
     </div>
@@ -161,10 +175,12 @@
         <button onclick="openModal('ram')">+ Link</button>
       </div>
       <div class="preview-3d-box" id="prev-ram">
-        <div class="holo-icon">⚡</div>
+        <div class="holo-icon" id="icon-ram" onclick="open3DViewer('ram', '⚡')">⚡<span class="holo-label">3D MODEL</span></div>
         <div class="preview-info">
           <div class="preview-name" id="pname-ram">RAM</div>
-          <a id="vid-ram" href="#" target="_blank" class="btn-video">▶️ Watch 3D / Review Video ↗</a>
+          <div class="preview-tag">🧊 Interactive 3D Model View</div>
+          <button class="btn-3d-action" onclick="open3DViewer('ram', '⚡')">🔍 360° 3D View</button>
+          <button class="btn-3d-spin" onclick="spinIcon('ram')">🔄 Spin 3D</button>
         </div>
       </div>
     </div>
@@ -185,10 +201,12 @@
         <button onclick="openModal('ssd')">+ Link</button>
       </div>
       <div class="preview-3d-box" id="prev-ssd">
-        <div class="holo-icon">💾</div>
+        <div class="holo-icon" id="icon-ssd" onclick="open3DViewer('ssd', '💾')">💾<span class="holo-label">3D MODEL</span></div>
         <div class="preview-info">
           <div class="preview-name" id="pname-ssd">SSD</div>
-          <a id="vid-ssd" href="#" target="_blank" class="btn-video">▶️ Watch 3D / Review Video ↗</a>
+          <div class="preview-tag">🧊 Interactive 3D Model View</div>
+          <button class="btn-3d-action" onclick="open3DViewer('ssd', '💾')">🔍 360° 3D View</button>
+          <button class="btn-3d-spin" onclick="spinIcon('ssd')">🔄 Spin 3D</button>
         </div>
       </div>
     </div>
@@ -210,10 +228,12 @@
         <button onclick="openModal('gpu')">+ Link</button>
       </div>
       <div class="preview-3d-box" id="prev-gpu">
-        <div class="holo-icon">🎮</div>
+        <div class="holo-icon" id="icon-gpu" onclick="open3DViewer('gpu', '🎮')">🎮<span class="holo-label">3D MODEL</span></div>
         <div class="preview-info">
           <div class="preview-name" id="pname-gpu">GPU</div>
-          <a id="vid-gpu" href="#" target="_blank" class="btn-video">▶️ Watch 3D / Review Video ↗</a>
+          <div class="preview-tag">🧊 Interactive 3D Model View</div>
+          <button class="btn-3d-action" onclick="open3DViewer('gpu', '🎮')">🔍 360° 3D View</button>
+          <button class="btn-3d-spin" onclick="spinIcon('gpu')">🔄 Spin 3D</button>
         </div>
       </div>
     </div>
@@ -234,377 +254,4 @@
         <button onclick="openModal('psu')">+ Link</button>
       </div>
       <div class="preview-3d-box" id="prev-psu">
-        <div class="holo-icon">🔌</div>
-        <div class="preview-info">
-          <div class="preview-name" id="pname-psu">PSU</div>
-          <a id="vid-psu" href="#" target="_blank" class="btn-video">▶️ Watch 3D / Review Video ↗</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- 7. Cabinet -->
-    <div class="card">
-      <div class="slot-head">
-        <span class="slot-title">🖥️ 7. Cabinet</span>
-        <div><span class="slot-price" id="price-cab">₹0</span><a id="link-cab" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
-      </div>
-      <div class="row">
-        <select id="sel-cab" onchange="calc()">
-          <option value="0|0||">-- Cabinet Chunein --</option>
-          <option value="3199|10|Amazon|https://www.amazon.in/s?k=Ant+Esports+ICE-112+Cabinet">Ant Esports ICE-112 Case — ₹3,199 (Amazon)</option>
-          <option value="3799|15|Flipkart|https://www.flipkart.com/search?q=Galax+Revolution+05+RGB+Cabinet">Galax Revolution 05 RGB — ₹3,799 (Flipkart)</option>
-        </select>
-        <button onclick="openModal('cab')">+ Link</button>
-      </div>
-      <div class="preview-3d-box" id="prev-cab">
-        <div class="holo-icon">🖥️</div>
-        <div class="preview-info">
-          <div class="preview-name" id="pname-cab">Cabinet</div>
-          <a id="vid-cab" href="#" target="_blank" class="btn-video">▶️ Watch 3D / Review Video ↗</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- 8. Cooler -->
-    <div class="card">
-      <div class="slot-head">
-        <span class="slot-title">❄️ 8. CPU Cooler</span>
-        <div><span class="slot-price" id="price-cool">₹0</span><a id="link-cool" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
-      </div>
-      <div class="row">
-        <select id="sel-cool" onchange="calc()">
-          <option value="0|0||">-- CPU Cooler Chunein --</option>
-          <option value="0|5|Built-in|">Box Stock Cooler — ₹0 (Built-in)</option>
-          <option value="1899|10|Amazon|https://www.amazon.in/s?k=Deepcool+AG400+Air+Cooler">Deepcool AG400 Air Cooler — ₹1,899 (Amazon)</option>
-          <option value="5999|20|Flipkart|https://www.flipkart.com/search?q=Cooler+Master+ML240L+Liquid+Cooler">Cooler Master ML240L Liquid — ₹5,999 (Flipkart)</option>
-        </select>
-        <button onclick="openModal('cool')">+ Link</button>
-      </div>
-      <div class="preview-3d-box" id="prev-cool">
-        <div class="holo-icon">❄️</div>
-        <div class="preview-info">
-          <div class="preview-name" id="pname-cool">Cooler</div>
-          <a id="vid-cool" href="#" target="_blank" class="btn-video">▶️ Watch 3D / Review Video ↗</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- 9. Monitor -->
-    <div class="card">
-      <div class="slot-head">
-        <span class="slot-title">📺 9. Monitor</span>
-        <div><span class="slot-price" id="price-mon">₹0</span><a id="link-mon" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
-      </div>
-      <div class="row">
-        <select id="sel-mon" onchange="calc()">
-          <option value="0|0||">-- Monitor Chunein --</option>
-          <option value="10499|30|Amazon|https://www.amazon.in/s?k=LG+Ultragear+24+180Hz+IPS">LG Ultragear 24" 180Hz IPS — ₹10,499 (Amazon)</option>
-          <option value="8999|28|Flipkart|https://www.flipkart.com/search?q=Acer+Nitro+23.8+180Hz+Monitor">Acer Nitro 23.8" 180Hz — ₹8,999 (Flipkart)</option>
-        </select>
-        <button onclick="openModal('mon')">+ Link</button>
-      </div>
-      <div class="preview-3d-box" id="prev-mon">
-        <div class="holo-icon">📺</div>
-        <div class="preview-info">
-          <div class="preview-name" id="pname-mon">Monitor</div>
-          <a id="vid-mon" href="#" target="_blank" class="btn-video">▶️ Watch 3D / Review Video ↗</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- RIGHT SIDE: 3D VIRTUAL CABINET & TOTAL COST -->
-  <div>
-    <div style="position: sticky; top: 70px;">
-      <div class="rig-stage-wrap">
-        <div class="rig-stage-head">
-          <span>🎮 <b>Interactive 3D Virtual Rig</b></span>
-          <button onclick="autoRotateToggle()" style="padding:3px 8px;font-size:10px;">🔄 Auto-Spin</button>
-        </div>
-        <div class="scene-3d" id="scene-3d">
-          <div class="pc-rig-3d" id="pc-rig">
-            <div class="case-face face-side-back"></div>
-            <div class="case-face face-back"></div>
-            <div class="case-face face-top"></div>
-            <div class="case-face face-bottom"></div>
-            <div class="case-face face-front">
-              <div class="rgb-fan" id="fan-1"></div>
-              <div class="rgb-fan" id="fan-2"></div>
-              <div class="rgb-fan" id="fan-3"></div>
-            </div>
-            <div class="part-3d p3d-mobo" id="3d-mobo"></div>
-            <div class="part-3d p3d-cpu" id="3d-cpu">CPU</div>
-            <div class="part-3d p3d-ram" id="3d-ram"></div>
-            <div class="part-3d p3d-ssd" id="3d-ssd">NVMe</div>
-            <div class="part-3d p3d-gpu" id="3d-gpu">RTX / RX</div>
-            <div class="part-3d p3d-psu" id="3d-psu">PSU ⚡</div>
-            <div class="case-face face-glass"></div>
-            <div class="mon-3d" id="3d-mon">180Hz IPS</div>
-          </div>
-        </div>
-        <div id="rig-status" style="font-size:11px;color:#38bdf8;font-weight:700;">Upar se parts select karein aur 3D Rig mein fit hote dekhein!</div>
-      </div>
-
-      <div class="card">
-        <div style="font-size:12px;color:#94a3b8;text-transform:uppercase;">Total Build Cost</div>
-        <div class="total-num" id="grand-total">₹0</div>
-        <div style="font-size:12px;color:#64748b;margin-bottom:12px;">GST Included • Live 3D Sync Active</div>
-
-        <button class="btn-success" onclick="openOrderModal()">🛒 Order Selected Parts</button>
-        <button class="btn-whatsapp" onclick="orderWhatsApp()">💬 Send Build Order on WhatsApp</button>
-
-        <hr style="border:0;border-top:1px solid #1f2937;margin:16px 0;">
-
-        <div class="slot-head">
-          <span class="slot-title">⚡ Estimated Wattage</span>
-          <span id="watt-total" style="color:#fbbf24;font-weight:800;">0W</span>
-        </div>
-        <div id="psu-rec" style="font-size:12px;color:#94a3b8;margin-bottom:16px;">Recommended PSU: Select parts</div>
-
-        <div class="slot-title" style="margin-bottom:8px;">🛍️ Your Selected Cart</div>
-        <div id="cart-list" style="font-size:13px;color:#94a3b8;margin-bottom:16px;">Abhi koi part select nahi kiya gaya hai.</div>
-
-        <div class="slot-title" style="margin-bottom:8px;">🏪 Store-wise Total</div>
-        <div id="store-list" style="font-size:13px;color:#94a3b8;">No components selected.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ADD CUSTOM MODAL -->
-<div class="modal" id="modal">
-  <div class="modal-box">
-    <div class="slot-head" style="margin-bottom:14px;">
-      <span class="slot-title">🔗 Add Custom Product</span>
-      <button onclick="closeModal()">✕</button>
-    </div>
-    <div class="field"><label>Category</label>
-      <select id="m-cat">
-        <option value="cpu">CPU</option><option value="mobo">Motherboard</option><option value="ram">RAM</option><option value="ssd">Storage</option><option value="gpu">GPU</option><option value="psu">PSU</option><option value="cab">Cabinet</option><option value="cool">Cooler</option><option value="mon">Monitor</option>
-      </select>
-    </div>
-    <div class="field"><label>Product Buy Link</label><input type="url" id="m-url" placeholder="https://www.amazon.in/..."></div>
-    <div class="field"><label>Component Name</label><input type="text" id="m-name" placeholder="e.g. Ryzen 5 5600GT"></div>
-    <div class="field"><label>Price (₹)</label><input type="number" id="m-price" placeholder="12000"></div>
-    <div class="field"><label>Store</label>
-      <select id="m-store"><option value="Amazon">Amazon</option><option value="Flipkart">Flipkart</option><option value="MDComputers">MDComputers</option><option value="Vedant">Vedant</option></select>
-    </div>
-    <button class="btn-primary" style="width:100%;padding:12px;" onclick="addCustom()">Add & Select Component</button>
-  </div>
-</div>
-
-<!-- ORDER MODAL -->
-<div class="modal" id="order-modal">
-  <div class="modal-box">
-    <div class="slot-head" style="margin-bottom:12px;">
-      <span class="slot-title" style="font-size:17px;">🛒 Complete Your PC Order</span>
-      <button onclick="closeOrderModal()">✕</button>
-    </div>
-    <div id="order-modal-list" style="max-height:260px;overflow-y:auto;margin-bottom:14px;border:1px solid #1f2937;border-radius:10px;padding:10px;background:#0b0f19;"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid #1f2937;margin-bottom:10px;">
-      <span style="font-size:14px;font-weight:700;">Grand Total:</span>
-      <span id="order-modal-total" style="font-size:20px;font-weight:900;color:#34d399;">₹0</span>
-    </div>
-    <button class="btn-primary" style="width:100%;padding:12px;margin-bottom:8px;" onclick="openAllLinks()">🚀 Open All Store Links at Once</button>
-    <button class="btn-whatsapp" onclick="orderWhatsApp()">💬 Share / Order via WhatsApp</button>
-  </div>
-</div>
-
-<script>
-const IDS = ['cpu','mobo','ram','ssd','gpu','psu','cab','cool','mon'];
-let selectedItems = [];
-
-function calc() {
-  let total = 0, watts = 0, stores = {};
-  selectedItems = [];
-
-  IDS.forEach(id => {
-    const sel = document.getElementById('sel-' + id);
-    if (!sel) return;
-    const idx = sel.selectedIndex;
-    const opt = sel.options[idx];
-    const priceEl = document.getElementById('price-' + id);
-    const linkEl = document.getElementById('link-' + id);
-    const prevBox = document.getElementById('prev-' + id);
-
-    if (idx <= 0 || !opt) {
-      priceEl.textContent = '₹0';
-      linkEl.classList.remove('show');
-      prevBox.classList.remove('active');
-      update3DRig(id, false);
-      return;
-    }
-
-    const parts = (opt.value || '').split('|');
-    let p = Number(parts[0]) || 0;
-    if (p === 0) {
-      const m = (opt.text || '').match(/₹\s*([\d,]+)/);
-      if (m && m[1]) p = Number(m[1].replace(/,/g, '')) || 0;
-    }
-    const w = Number(parts[1]) || 15;
-    const s = parts[2] || 'Store';
-    const u = parts[3] || '';
-    const itemName = (opt.text || '').split(' — ')[0].trim();
-
-    priceEl.textContent = '₹' + p.toLocaleString('en-IN');
-
-    if (u) {
-      linkEl.href = u;
-      linkEl.classList.add('show');
-    } else {
-      linkEl.classList.remove('show');
-    }
-
-    // Show 3D Hologram Card & YouTube Video Link
-    document.getElementById('pname-' + id).textContent = itemName;
-    document.getElementById('vid-' + id).href = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(itemName + ' unboxing review 3d');
-    prevBox.classList.add('active');
-    update3DRig(id, true);
-
-    total += p;
-    watts += w;
-    if (p > 0) stores[s] = (stores[s] || 0) + p;
-    selectedItems.push({ id, name: itemName, price: p, store: s, url: u });
-  });
-
-  document.getElementById('grand-total').textContent = '₹' + total.toLocaleString('en-IN');
-  document.getElementById('watt-total').textContent = watts + 'W';
-  document.getElementById('psu-rec').textContent = watts > 0 ? 'Recommended PSU: Min ' + (Math.ceil((watts + 150)/50)*50) + 'W' : 'Recommended PSU: Select parts';
-  document.getElementById('rig-status').textContent = selectedItems.length > 0 
-    ? `✅ ${selectedItems.length}/9 Parts Installed in 3D Rig!` 
-    : 'Upar se parts select karein aur 3D Rig mein fit hote dekhein!';
-
-  const cartEl = document.getElementById('cart-list');
-  if (selectedItems.length === 0) {
-    cartEl.innerHTML = 'Abhi koi part select nahi kiya gaya hai.';
-  } else {
-    cartEl.innerHTML = selectedItems.map(item => `
-      <div class="cart-item">
-        <div class="cart-item-name">${item.name}<br><span style="color:#34d399;font-weight:700;">₹${item.price.toLocaleString('en-IN')}</span> <span style="color:#64748b;">(${item.store})</span></div>
-        ${item.url ? `<a href="${item.url}" target="_blank" class="cart-buy-btn">Buy ↗</a>` : `<span style="font-size:11px;color:#64748b;">Included</span>`}
-      </div>
-    `).join('');
-  }
-
-  const stKeys = Object.keys(stores);
-  document.getElementById('store-list').innerHTML = stKeys.length ? stKeys.map(k => `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1f2937;"><span>${k}</span><strong style="color:#34d399;">₹${stores[k].toLocaleString('en-IN')}</strong></div>`).join('') : 'No components selected.';
-}
-
-function update3DRig(id, installed) {
-  if (id === 'cab' || id === 'cool') {
-    ['fan-1','fan-2','fan-3'].forEach(f => {
-      const el = document.getElementById(f);
-      if (el) el.classList.toggle('on', installed);
-    });
-  }
-  const el = document.getElementById('3d-' + id);
-  if (el) el.classList.toggle('installed', installed);
-}
-
-// 3D Rotation Logic
-let rotY = -28, rotX = -12, isDragging = false, startX = 0, startY = 0, autoSpin = true;
-const sceneEl = document.getElementById('scene-3d');
-const rigEl = document.getElementById('pc-rig');
-
-function renderRigAngle() {
-  rigEl.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-}
-sceneEl.addEventListener('pointerdown', e => { isDragging = true; autoSpin = false; startX = e.clientX; startY = e.clientY; });
-window.addEventListener('pointermove', e => {
-  if (!isDragging) return;
-  rotY += (e.clientX - startX) * 0.6;
-  rotX -= (e.clientY - startY) * 0.4;
-  rotX = Math.max(-40, Math.min(25, rotX));
-  startX = e.clientX; startY = e.clientY;
-  renderRigAngle();
-});
-window.addEventListener('pointerup', () => { isDragging = false; });
-function autoRotateToggle() { autoSpin = !autoSpin; }
-
-setInterval(() => {
-  if (autoSpin && !isDragging) {
-    rotY = (rotY + 0.8) % 360;
-    renderRigAngle();
-  }
-}, 40);
-
-function openModal(cat) {
-  document.getElementById('m-cat').value = cat || 'cpu';
-  document.getElementById('m-url').value = '';
-  document.getElementById('m-name').value = '';
-  document.getElementById('m-price').value = '';
-  document.getElementById('modal').classList.add('open');
-}
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-
-function addCustom() {
-  const cat = document.getElementById('m-cat').value;
-  const name = document.getElementById('m-name').value || 'Custom Part';
-  const price = Number(document.getElementById('m-price').value) || 0;
-  const store = document.getElementById('m-store').value;
-  const url = document.getElementById('m-url').value || `https://www.amazon.in/s?k=${encodeURIComponent(name)}`;
-
-  const sel = document.getElementById('sel-' + cat);
-  const opt = document.createElement('option');
-  opt.value = `${price}|35|${store}|${url}`;
-  opt.textContent = `${name} — ₹${price.toLocaleString('en-IN')} (${store})`;
-  sel.appendChild(opt);
-  sel.selectedIndex = sel.options.length - 1;
-  closeModal();
-  calc();
-}
-
-function openOrderModal() {
-  if (selectedItems.length === 0) { alert('Pehle kam se kam 1 PC part select karein!'); return; }
-  const listEl = document.getElementById('order-modal-list');
-  listEl.innerHTML = selectedItems.map(item => `
-    <div class="cart-item">
-      <div class="cart-item-name">${item.name}<br><span style="color:#34d399;font-weight:700;">₹${item.price.toLocaleString('en-IN')}</span> • <span style="color:#94a3b8;">${item.store}</span></div>
-      ${item.url ? `<a href="${item.url}" target="_blank" class="cart-buy-btn" style="background:#059669;padding:7px 12px;">🛒 Order on ${item.store} ↗</a>` : `<span style="color:#64748b;">Built-in</span>`}
-    </div>
-  `).join('');
-  document.getElementById('order-modal-total').textContent = document.getElementById('grand-total').textContent;
-  document.getElementById('order-modal').classList.add('open');
-}
-function closeOrderModal() { document.getElementById('order-modal').classList.remove('open'); }
-
-function openAllLinks() {
-  const links = selectedItems.filter(i => i.url);
-  if (!links.length) { alert('Koi store link available nahi hai.'); return; }
-  links.forEach(item => window.open(item.url, '_blank'));
-}
-
-function orderWhatsApp() {
-  if (!selectedItems.length) { alert('Pehle apne PC parts select karein!'); return; }
-  let msg = '🛒 *My Custom 3D PC Build Order*\n\n';
-  selectedItems.forEach((item, idx) => {
-    msg += `${idx + 1}. *${item.name}* — ₹${item.price.toLocaleString('en-IN')} (${item.store})\n`;
-    if (item.url) msg += `   Link: ${item.url}\n`;
-  });
-  msg += `\n⚡ *Estimated Wattage:* ${document.getElementById('watt-total').textContent}`;
-  msg += `\n💰 *Total Build Cost:* ${document.getElementById('grand-total').textContent}`;
-  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
-}
-
-function resetAll() {
-  IDS.forEach(id => {
-    const sel = document.getElementById('sel-' + id);
-    if (sel) sel.selectedIndex = 0;
-  });
-  calc();
-}
-
-function copyBuild() {
-  if (!selectedItems.length) { alert('Pehle kuch parts select karein!'); return; }
-  let txt = '🖥️ My Custom PC Build:\n';
-  selectedItems.forEach(item => { txt += `• ${item.name} — ₹${item.price.toLocaleString('en-IN')} (${item.store})\n`; });
-  txt += '\nTotal: ' + document.getElementById('grand-total').textContent;
-  navigator.clipboard.writeText(txt);
-  alert('Build copied!');
-}
-
-calc();
-setInterval(calc, 350);
-</script>
-</body>
-</html>
+        <div class="holo-icon" id="icon-psu" onclick="open3DViewer('psu', '🔌')">🔌<
