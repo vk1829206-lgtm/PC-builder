@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RigCrafter India - Only 3D View Edition</title>
+<title>RigCrafter India - v8.0 Real Hardware 3D</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
   body { background: #070b14; color: #e2e8f0; padding-bottom: 60px; overflow-x: hidden; }
   .nav { background: #111827; border-bottom: 1px solid #1f2937; padding: 12px 16px; position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
   .logo { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
-  .badge { font-size: 11px; background: linear-gradient(90deg, #0284c7, #6366f1); color: #fff; padding: 3px 10px; border-radius: 99px; font-weight: 800; }
+  .badge { font-size: 11px; background: linear-gradient(90deg, #f59e0b, #ef4444); color: #fff; padding: 3px 10px; border-radius: 99px; font-weight: 800; }
   .btns { display: flex; gap: 8px; flex-wrap: wrap; }
   button { cursor: pointer; border: none; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 600; color: #fff; background: #1f2937; border: 1px solid #374151; }
   .btn-primary { background: #4f46e5; border-color: #6366f1; }
@@ -31,20 +31,32 @@
   .buy-link { display: none; font-size: 12px; background: #065f46; color: #6ee7b7; padding: 4px 10px; border-radius: 8px; text-decoration: none; font-weight: 700; margin-left: 8px; border: 1px solid #059669; }
   .buy-link.show { display: inline-block; }
 
-  /* ONLY 3D IMAGE PREVIEW BOX inside each slot */
-  .preview-3d-box { display: none; margin-top: 12px; background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%); border: 1px solid #38bdf8; border-radius: 12px; padding: 12px; align-items: center; justify-content: space-between; gap: 14px; perspective: 800px; }
+  /* REAL HARDWARE 3D PREVIEW BOX */
+  .preview-3d-box { display: none; margin-top: 12px; background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%); border: 1px solid #38bdf8; border-radius: 12px; padding: 14px; align-items: center; justify-content: space-between; gap: 14px; perspective: 900px; }
   .preview-3d-box.active { display: flex; flex-wrap: wrap; }
-  .holo-icon { width: 82px; height: 82px; border-radius: 14px; background: linear-gradient(135deg, rgba(2,132,199,0.28), rgba(99,102,241,0.28)); border: 2px solid #38bdf8; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 36px; transform-style: preserve-3d; animation: float3d 2.8s ease-in-out infinite; box-shadow: 0 8px 22px rgba(56,189,248,0.35); cursor: pointer; }
-  .holo-icon.spin360 { animation: fullSpin 1.2s linear infinite; }
-  @keyframes float3d { 0%, 100% { transform: translateY(0px) rotateY(-18deg) rotateX(10deg); } 50% { transform: translateY(-5px) rotateY(18deg) rotateX(-10deg); } }
-  @keyframes fullSpin { 0% { transform: rotateY(0deg) rotateX(8deg); } 100% { transform: rotateY(360deg) rotateX(8deg); } }
-  .holo-label { font-size: 9px; background: #0284c7; color: #fff; padding: 1px 6px; border-radius: 99px; font-weight: 800; margin-top: 3px; }
   
+  .hw-mini-stage { width: 120px; height: 95px; border-radius: 12px; background: rgba(15,23,42,0.75); border: 1px solid #334155; display: flex; align-items: center; justify-content: center; perspective: 600px; cursor: pointer; overflow: hidden; }
+  .hw-mini-model { transform-style: preserve-3d; animation: floatHW 3.2s ease-in-out infinite; }
+  .hw-mini-model.spin360 { animation: fullSpinHW 1.4s linear infinite; }
+  @keyframes floatHW { 0%, 100% { transform: rotateY(-22deg) rotateX(14deg) scale(0.68); } 50% { transform: rotateY(22deg) rotateX(-10deg) scale(0.68); } }
+  @keyframes fullSpinHW { 0% { transform: rotateY(0deg) rotateX(12deg) scale(0.68); } 100% { transform: rotateY(360deg) rotateX(12deg) scale(0.68); } }
+
   .preview-info { flex: 1; min-width: 160px; }
   .preview-name { font-size: 14px; font-weight: 800; color: #fff; margin-bottom: 3px; }
   .preview-tag { font-size: 11px; color: #38bdf8; margin-bottom: 8px; font-weight: 600; }
   .btn-3d-action { background: #0284c7; border: 1px solid #38bdf8; color: #fff; padding: 6px 11px; border-radius: 8px; font-size: 11px; font-weight: 700; margin-right: 6px; }
   .btn-3d-spin { background: #312e81; border: 1px solid #6366f1; color: #fff; padding: 6px 11px; border-radius: 8px; font-size: 11px; font-weight: 700; }
+
+  /* REALISTIC 3D HARDWARE MODELS (MULTI-LAYER 3D) */
+  .hw-3d-root { position: relative; transform-style: preserve-3d; display: flex; align-items: center; justify-content: center; }
+  .hw-layer-back { position: absolute; inset: 0; transform: translateZ(-12px) rotateY(180deg); border-radius: inherit; }
+  .hw-layer-mid { position: absolute; inset: 0; transform: translateZ(-6px); opacity: 0.7; }
+
+  /* 360° 3D Modal Viewer */
+  .viewer-3d-stage { height: 260px; background: radial-gradient(circle, #1e293b 0%, #050811 85%); border: 2px solid #38bdf8; border-radius: 16px; display: flex; align-items: center; justify-content: center; perspective: 1000px; cursor: grab; user-select: none; touch-action: none; margin-bottom: 12px; position: relative; overflow: hidden; box-shadow: inset 0 0 40px rgba(56,189,248,0.2); }
+  .viewer-3d-stage:active { cursor: grabbing; }
+  .viewer-3d-object { transform-style: preserve-3d; transition: transform 0.05s linear; }
+  .drag-hint { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); font-size: 10px; background: rgba(2,132,199,0.3); border: 1px solid #38bdf8; color: #bae6fd; padding: 2px 10px; border-radius: 99px; pointer-events: none; }
 
   /* INTERACTIVE 3D PC CABINET STAGE */
   .rig-stage-wrap { background: radial-gradient(circle at 50% 35%, #1e1b4b 0%, #090d16 75%); border: 1px solid #312e81; border-radius: 16px; padding: 14px; margin-bottom: 14px; text-align: center; }
@@ -84,16 +96,12 @@
   .modal-box { background: #111827; border: 1px solid #374151; border-radius: 16px; width: 100%; max-width: 480px; padding: 18px; max-height: 90vh; overflow-y: auto; }
   .field { margin-bottom: 12px; }
   .field label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
-
-  /* 360 3D Modal Viewer */
-  .viewer-3d-stage { height: 220px; background: radial-gradient(circle, #1e293b 0%, #070b14 80%); border: 1px solid #38bdf8; border-radius: 14px; display: flex; align-items: center; justify-content: center; perspective: 900px; cursor: grab; user-select: none; touch-action: none; margin-bottom: 12px; }
-  .viewer-3d-cube { width: 130px; height: 130px; border-radius: 22px; background: linear-gradient(135deg, rgba(2,132,199,0.35), rgba(124,58,237,0.35)); border: 2px solid #38bdf8; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 56px; transform-style: preserve-3d; box-shadow: 0 0 35px rgba(56,189,248,0.45); }
 </style>
 </head>
 <body>
 
 <div class="nav">
-  <div class="logo">⚡ RigCrafter <span class="badge">ONLY 3D VIEW</span></div>
+  <div class="logo">⚡ RigCrafter <span class="badge">v8.0 REAL HARDWARE 3D</span></div>
   <div class="btns">
     <button class="btn-primary" onclick="openModal('cpu')">+ Add Custom Part</button>
     <button onclick="openOrderModal()" style="background:#059669;border-color:#10b981;">🛒 Order Now</button>
@@ -103,12 +111,12 @@
 </div>
 
 <div class="container">
-  <!-- LEFT SIDE: HARDCODED 9 PART SELECTORS (ONLY 3D VIEW, NO VIDEO) -->
+  <!-- LEFT SIDE: 9 PART SELECTORS WITH REAL HARDWARE 3D MODELS -->
   <div>
     <!-- 1. CPU -->
     <div class="card">
       <div class="slot-head">
-        <span class="slot-title">🧠 1. Processor (CPU)</span>
+        <span class="slot-title">1. Processor (CPU)</span>
         <div><span class="slot-price" id="price-cpu">₹0</span><a id="link-cpu" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
@@ -122,11 +130,11 @@
         <button onclick="openModal('cpu')">+ Link</button>
       </div>
       <div class="preview-3d-box" id="prev-cpu">
-        <div class="holo-icon" id="icon-cpu" onclick="open3DViewer('cpu', '🧠')">🧠<span class="holo-label">3D MODEL</span></div>
+        <div class="hw-mini-stage" onclick="open3DViewer('cpu')"><div class="hw-mini-model" id="icon-cpu"></div></div>
         <div class="preview-info">
           <div class="preview-name" id="pname-cpu">Processor</div>
-          <div class="preview-tag">🧊 Interactive 3D Model View</div>
-          <button class="btn-3d-action" onclick="open3DViewer('cpu', '🧠')">🔍 360° 3D View</button>
+          <div class="preview-tag">🧊 Real 3D Hardware Model (Front + Gold Pins Back)</div>
+          <button class="btn-3d-action" onclick="open3DViewer('cpu')">🔍 360° Real 3D View</button>
           <button class="btn-3d-spin" onclick="spinIcon('cpu')">🔄 Spin 3D</button>
         </div>
       </div>
@@ -135,7 +143,7 @@
     <!-- 2. Motherboard -->
     <div class="card">
       <div class="slot-head">
-        <span class="slot-title">🎛️ 2. Motherboard</span>
+        <span class="slot-title">2. Motherboard</span>
         <div><span class="slot-price" id="price-mobo">₹0</span><a id="link-mobo" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
@@ -149,11 +157,11 @@
         <button onclick="openModal('mobo')">+ Link</button>
       </div>
       <div class="preview-3d-box" id="prev-mobo">
-        <div class="holo-icon" id="icon-mobo" onclick="open3DViewer('mobo', '🎛️')">🎛️<span class="holo-label">3D MODEL</span></div>
+        <div class="hw-mini-stage" onclick="open3DViewer('mobo')"><div class="hw-mini-model" id="icon-mobo"></div></div>
         <div class="preview-info">
           <div class="preview-name" id="pname-mobo">Motherboard</div>
-          <div class="preview-tag">🧊 Interactive 3D Model View</div>
-          <button class="btn-3d-action" onclick="open3DViewer('mobo', '🎛️')">🔍 360° 3D View</button>
+          <div class="preview-tag">🧊 Real 3D PCB, Socket, VRM & RAM Slots</div>
+          <button class="btn-3d-action" onclick="open3DViewer('mobo')">🔍 360° Real 3D View</button>
           <button class="btn-3d-spin" onclick="spinIcon('mobo')">🔄 Spin 3D</button>
         </div>
       </div>
@@ -162,7 +170,7 @@
     <!-- 3. RAM -->
     <div class="card">
       <div class="slot-head">
-        <span class="slot-title">⚡ 3. Memory (RAM)</span>
+        <span class="slot-title">3. Memory (RAM)</span>
         <div><span class="slot-price" id="price-ram">₹0</span><a id="link-ram" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
@@ -175,11 +183,11 @@
         <button onclick="openModal('ram')">+ Link</button>
       </div>
       <div class="preview-3d-box" id="prev-ram">
-        <div class="holo-icon" id="icon-ram" onclick="open3DViewer('ram', '⚡')">⚡<span class="holo-label">3D MODEL</span></div>
+        <div class="hw-mini-stage" onclick="open3DViewer('ram')"><div class="hw-mini-model" id="icon-ram"></div></div>
         <div class="preview-info">
           <div class="preview-name" id="pname-ram">RAM</div>
-          <div class="preview-tag">🧊 Interactive 3D Model View</div>
-          <button class="btn-3d-action" onclick="open3DViewer('ram', '⚡')">🔍 360° 3D View</button>
+          <div class="preview-tag">🧊 Real 3D Heatsink & Gold DDR Pins</div>
+          <button class="btn-3d-action" onclick="open3DViewer('ram')">🔍 360° Real 3D View</button>
           <button class="btn-3d-spin" onclick="spinIcon('ram')">🔄 Spin 3D</button>
         </div>
       </div>
@@ -188,7 +196,7 @@
     <!-- 4. SSD -->
     <div class="card">
       <div class="slot-head">
-        <span class="slot-title">💾 4. Storage (SSD)</span>
+        <span class="slot-title">4. Storage (SSD)</span>
         <div><span class="slot-price" id="price-ssd">₹0</span><a id="link-ssd" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
@@ -201,11 +209,11 @@
         <button onclick="openModal('ssd')">+ Link</button>
       </div>
       <div class="preview-3d-box" id="prev-ssd">
-        <div class="holo-icon" id="icon-ssd" onclick="open3DViewer('ssd', '💾')">💾<span class="holo-label">3D MODEL</span></div>
+        <div class="hw-mini-stage" onclick="open3DViewer('ssd')"><div class="hw-mini-model" id="icon-ssd"></div></div>
         <div class="preview-info">
           <div class="preview-name" id="pname-ssd">SSD</div>
-          <div class="preview-tag">🧊 Interactive 3D Model View</div>
-          <button class="btn-3d-action" onclick="open3DViewer('ssd', '💾')">🔍 360° 3D View</button>
+          <div class="preview-tag">🧊 Real 3D M.2 NVMe Stick & NAND Chips</div>
+          <button class="btn-3d-action" onclick="open3DViewer('ssd')">🔍 360° Real 3D View</button>
           <button class="btn-3d-spin" onclick="spinIcon('ssd')">🔄 Spin 3D</button>
         </div>
       </div>
@@ -214,7 +222,7 @@
     <!-- 5. GPU -->
     <div class="card">
       <div class="slot-head">
-        <span class="slot-title">🎮 5. Graphics Card (GPU)</span>
+        <span class="slot-title">5. Graphics Card (GPU)</span>
         <div><span class="slot-price" id="price-gpu">₹0</span><a id="link-gpu" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
@@ -228,11 +236,11 @@
         <button onclick="openModal('gpu')">+ Link</button>
       </div>
       <div class="preview-3d-box" id="prev-gpu">
-        <div class="holo-icon" id="icon-gpu" onclick="open3DViewer('gpu', '🎮')">🎮<span class="holo-label">3D MODEL</span></div>
+        <div class="hw-mini-stage" onclick="open3DViewer('gpu')"><div class="hw-mini-model" id="icon-gpu"></div></div>
         <div class="preview-info">
           <div class="preview-name" id="pname-gpu">GPU</div>
-          <div class="preview-tag">🧊 Interactive 3D Model View</div>
-          <button class="btn-3d-action" onclick="open3DViewer('gpu', '🎮')">🔍 360° 3D View</button>
+          <div class="preview-tag">🧊 Real Dual-Fan 3D GPU & Backplate</div>
+          <button class="btn-3d-action" onclick="open3DViewer('gpu')">🔍 360° Real 3D View</button>
           <button class="btn-3d-spin" onclick="spinIcon('gpu')">🔄 Spin 3D</button>
         </div>
       </div>
@@ -241,7 +249,7 @@
     <!-- 6. PSU -->
     <div class="card">
       <div class="slot-head">
-        <span class="slot-title">🔌 6. Power Supply (PSU)</span>
+        <span class="slot-title">6. Power Supply (PSU)</span>
         <div><span class="slot-price" id="price-psu">₹0</span><a id="link-psu" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
@@ -254,11 +262,11 @@
         <button onclick="openModal('psu')">+ Link</button>
       </div>
       <div class="preview-3d-box" id="prev-psu">
-        <div class="holo-icon" id="icon-psu" onclick="open3DViewer('psu', '🔌')">🔌<span class="holo-label">3D MODEL</span></div>
+        <div class="hw-mini-stage" onclick="open3DViewer('psu')"><div class="hw-mini-model" id="icon-psu"></div></div>
         <div class="preview-info">
           <div class="preview-name" id="pname-psu">PSU</div>
-          <div class="preview-tag">🧊 Interactive 3D Model View</div>
-          <button class="btn-3d-action" onclick="open3DViewer('psu', '🔌')">🔍 360° 3D View</button>
+          <div class="preview-tag">🧊 Real 3D PSU Unit, Fan Grille & Ports</div>
+          <button class="btn-3d-action" onclick="open3DViewer('psu')">🔍 360° Real 3D View</button>
           <button class="btn-3d-spin" onclick="spinIcon('psu')">🔄 Spin 3D</button>
         </div>
       </div>
@@ -267,7 +275,7 @@
     <!-- 7. Cabinet -->
     <div class="card">
       <div class="slot-head">
-        <span class="slot-title">🖥️ 7. Cabinet</span>
+        <span class="slot-title">7. Cabinet</span>
         <div><span class="slot-price" id="price-cab">₹0</span><a id="link-cab" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
@@ -279,11 +287,11 @@
         <button onclick="openModal('cab')">+ Link</button>
       </div>
       <div class="preview-3d-box" id="prev-cab">
-        <div class="holo-icon" id="icon-cab" onclick="open3DViewer('cab', '🖥️')">🖥️<span class="holo-label">3D MODEL</span></div>
+        <div class="hw-mini-stage" onclick="open3DViewer('cab')"><div class="hw-mini-model" id="icon-cab"></div></div>
         <div class="preview-info">
           <div class="preview-name" id="pname-cab">Cabinet</div>
-          <div class="preview-tag">🧊 Interactive 3D Model View</div>
-          <button class="btn-3d-action" onclick="open3DViewer('cab', '🖥️')">🔍 360° 3D View</button>
+          <div class="preview-tag">🧊 Real 3D ATX Tower & ARGB Fans</div>
+          <button class="btn-3d-action" onclick="open3DViewer('cab')">🔍 360° Real 3D View</button>
           <button class="btn-3d-spin" onclick="spinIcon('cab')">🔄 Spin 3D</button>
         </div>
       </div>
@@ -292,7 +300,7 @@
     <!-- 8. Cooler -->
     <div class="card">
       <div class="slot-head">
-        <span class="slot-title">❄️ 8. CPU Cooler</span>
+        <span class="slot-title">8. CPU Cooler</span>
         <div><span class="slot-price" id="price-cool">₹0</span><a id="link-cool" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
@@ -305,11 +313,11 @@
         <button onclick="openModal('cool')">+ Link</button>
       </div>
       <div class="preview-3d-box" id="prev-cool">
-        <div class="holo-icon" id="icon-cool" onclick="open3DViewer('cool', '❄️')">❄️<span class="holo-label">3D MODEL</span></div>
+        <div class="hw-mini-stage" onclick="open3DViewer('cool')"><div class="hw-mini-model" id="icon-cool"></div></div>
         <div class="preview-info">
           <div class="preview-name" id="pname-cool">Cooler</div>
-          <div class="preview-tag">🧊 Interactive 3D Model View</div>
-          <button class="btn-3d-action" onclick="open3DViewer('cool', '❄️')">🔍 360° 3D View</button>
+          <div class="preview-tag">🧊 Real 3D Fin-Stack, Copper Pipes & PWM Fan</div>
+          <button class="btn-3d-action" onclick="open3DViewer('cool')">🔍 360° Real 3D View</button>
           <button class="btn-3d-spin" onclick="spinIcon('cool')">🔄 Spin 3D</button>
         </div>
       </div>
@@ -318,7 +326,7 @@
     <!-- 9. Monitor -->
     <div class="card">
       <div class="slot-head">
-        <span class="slot-title">📺 9. Monitor</span>
+        <span class="slot-title">9. Monitor</span>
         <div><span class="slot-price" id="price-mon">₹0</span><a id="link-mon" class="buy-link" target="_blank">🛒 Buy Now ↗</a></div>
       </div>
       <div class="row">
@@ -330,11 +338,11 @@
         <button onclick="openModal('mon')">+ Link</button>
       </div>
       <div class="preview-3d-box" id="prev-mon">
-        <div class="holo-icon" id="icon-mon" onclick="open3DViewer('mon', '📺')">📺<span class="holo-label">3D MODEL</span></div>
+        <div class="hw-mini-stage" onclick="open3DViewer('mon')"><div class="hw-mini-model" id="icon-mon"></div></div>
         <div class="preview-info">
           <div class="preview-name" id="pname-mon">Monitor</div>
-          <div class="preview-tag">🧊 Interactive 3D Model View</div>
-          <button class="btn-3d-action" onclick="open3DViewer('mon', '📺')">🔍 360° 3D View</button>
+          <div class="preview-tag">🧊 Real 3D Gaming Display & Ergonomic Stand</div>
+          <button class="btn-3d-action" onclick="open3DViewer('mon')">🔍 360° Real 3D View</button>
           <button class="btn-3d-spin" onclick="spinIcon('mon')">🔄 Spin 3D</button>
         </div>
       </div>
@@ -399,16 +407,17 @@
   </div>
 </div>
 
-<!-- 360° 3D MODEL VIEWER MODAL (NO VIDEO) -->
+<!-- 360° REAL 3D HARDWARE VIEWER MODAL -->
 <div class="modal" id="viewer-modal">
   <div class="modal-box">
     <div class="slot-head" style="margin-bottom:10px;">
-      <span class="slot-title">🧊 360° 3D Component View</span>
+      <span class="slot-title">🧊 360° Real Hardware 3D View</span>
       <button onclick="close3DViewer()">✕</button>
     </div>
-    <p style="font-size:11px;color:#94a3b8;margin-bottom:10px;">Ungli ya Mouse se drag karke is part ko 3D mein charo taraf ghumayein:</p>
+    <p style="font-size:11px;color:#94a3b8;margin-bottom:10px;">Ungli ya Mouse se drag karke is Hardware Part ko aage-peeche 360° ghumayein:</p>
     <div class="viewer-3d-stage" id="v-stage">
-      <div class="viewer-3d-cube" id="v-cube">🧠<span class="holo-label">360° 3D</span></div>
+      <div class="viewer-3d-object" id="v-cube"></div>
+      <div class="drag-hint">↔️ Drag to Rotate 360° (Front & Back)</div>
     </div>
     <div style="text-align:center;">
       <div id="v-name" style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;">Component</div>
@@ -461,6 +470,142 @@
 const IDS = ['cpu','mobo','ram','ssd','gpu','psu','cab','cool','mon'];
 let selectedItems = [];
 
+// REALISTIC MULTI-LAYER 3D HARDWARE MODELS (FRONT + BACK PINS/PCB)
+function getRealHardware3D(id, label) {
+  const shortLabel = (label || id.toUpperCase()).slice(0, 14);
+  const models = {
+    cpu: `
+      <div class="hw-3d-root" style="width:130px;height:130px;">
+        <!-- Backside Gold Pins Grid -->
+        <div class="hw-layer-back" style="background:#065f46;border:3px solid #fbbf24;border-radius:10px;padding:10px;display:grid;grid-template-columns:repeat(6,1fr);gap:4px;">
+          ${'<div style="background:#fbbf24;border-radius:50%;"></div>'.repeat(36)}
+        </div>
+        <!-- Green PCB Substrate + Metallic IHS Front -->
+        <svg width="130" height="130" viewBox="0 0 130 130" style="transform:translateZ(6px);filter:drop-shadow(0 10px 18px rgba(0,0,0,0.7));">
+          <rect x="8" y="8" width="114" height="114" rx="8" fill="#047857" stroke="#fbbf24" stroke-width="3"/>
+          <polygon points="12,118 22,118 12,108" fill="#fbbf24"/>
+          <rect x="22" y="22" width="86" height="86" rx="10" fill="#cbd5e1" stroke="#64748b" stroke-width="3"/>
+          <rect x="30" y="30" width="70" height="70" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"/>
+          <text x="65" y="56" text-anchor="middle" fill="#0f172a" font-size="11" font-weight="900">RYZEN / CORE</text>
+          <text x="65" y="72" text-anchor="middle" fill="#ea580c" font-size="8" font-weight="800">${shortLabel}</text>
+          <rect x="42" y="82" width="46" height="6" rx="2" fill="#475569"/>
+        </svg>
+      </div>`,
+    mobo: `
+      <div class="hw-3d-root" style="width:135px;height:145px;">
+        <div class="hw-layer-back" style="background:#0f172a;border:2px solid #475569;border-radius:8px;"></div>
+        <svg width="135" height="145" viewBox="0 0 135 145" style="transform:translateZ(6px);filter:drop-shadow(0 10px 18px rgba(0,0,0,0.7));">
+          <rect x="6" y="6" width="123" height="133" rx="6" fill="#111827" stroke="#6366f1" stroke-width="2.5"/>
+          <!-- VRM Heatsinks -->
+          <rect x="14" y="14" width="20" height="52" rx="3" fill="#334155" stroke="#94a3b8"/>
+          <rect x="38" y="12" width="45" height="16" rx="3" fill="#334155" stroke="#94a3b8"/>
+          <!-- CPU Socket -->
+          <rect x="44" y="36" width="36" height="36" rx="4" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+          <!-- 4 DDR RAM Slots -->
+          <rect x="92" y="18" width="5" height="62" fill="#ef4444"/><rect x="100" y="18" width="5" height="62" fill="#3b82f6"/>
+          <rect x="108" y="18" width="5" height="62" fill="#ef4444"/><rect x="116" y="18" width="5" height="62" fill="#3b82f6"/>
+          <!-- PCIe Steel Slot -->
+          <rect x="16" y="90" width="95" height="8" rx="2" fill="#cbd5e1" stroke="#38bdf8"/>
+          <!-- M.2 Heatsink & Chipset -->
+          <rect x="20" y="104" width="52" height="14" rx="2" fill="#1e293b" stroke="#38bdf8"/>
+          <rect x="82" y="102" width="36" height="28" rx="4" fill="#312e81" stroke="#818cf8"/>
+          <text x="100" y="119" text-anchor="middle" fill="#fff" font-size="7" font-weight="900">B550/B650</text>
+        </svg>
+      </div>`,
+    ram: `
+      <div class="hw-3d-root" style="width:150px;height:85px;">
+        <div class="hw-layer-back" style="background:#1e1b4b;border:2px solid #a855f7;border-radius:6px;"></div>
+        <svg width="150" height="85" viewBox="0 0 150 85" style="transform:translateZ(6px);filter:drop-shadow(0 8px 16px rgba(0,0,0,0.7));">
+          <!-- RGB Light Bar -->
+          <rect x="10" y="12" width="130" height="10" rx="3" fill="url(#rgbGrad)"/>
+          <defs><linearGradient id="rgbGrad"><stop offset="0%" stop-color="#f43f5e"/><stop offset="50%" stop-color="#a855f7"/><stop offset="100%" stop-color="#38bdf8"/></linearGradient></defs>
+          <!-- Metallic Heatsink -->
+          <polygon points="8,22 142,22 138,62 12,62" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>
+          <text x="75" y="46" text-anchor="middle" fill="#f8fafc" font-size="10" font-weight="900">VENGEANCE / RIPJAWS</text>
+          <!-- Gold DDR Pins -->
+          <rect x="16" y="62" width="52" height="9" fill="#fbbf24"/><rect x="74" y="62" width="60" height="9" fill="#fbbf24"/>
+        </svg>
+      </div>`,
+    ssd: `
+      <div class="hw-3d-root" style="width:150px;height:75px;">
+        <div class="hw-layer-back" style="background:#064e3b;border:2px solid #10b981;border-radius:5px;"></div>
+        <svg width="150" height="75" viewBox="0 0 150 75" style="transform:translateZ(5px);filter:drop-shadow(0 8px 16px rgba(0,0,0,0.7));">
+          <rect x="8" y="18" width="134" height="40" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+          <!-- M.2 Gold Connector -->
+          <rect x="8" y="24" width="10" height="28" fill="#fbbf24"/>
+          <!-- NAND Flash Chips -->
+          <rect x="26" y="24" width="28" height="28" rx="2" fill="#1e293b" stroke="#475569"/>
+          <rect x="60" y="24" width="28" height="28" rx="2" fill="#1e293b" stroke="#475569"/>
+          <rect x="96" y="26" width="32" height="24" rx="2" fill="#0284c7"/>
+          <text x="112" y="41" text-anchor="middle" fill="#fff" font-size="8" font-weight="900">NVMe</text>
+          <circle cx="140" cy="38" r="4" fill="#cbd5e1"/>
+        </svg>
+      </div>`,
+    gpu: `
+      <div class="hw-3d-root" style="width:155px;height:105px;">
+        <!-- Backplate with Copper Pipes -->
+        <div class="hw-layer-back" style="background:#1e293b;border:2px solid #64748b;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:10px;font-weight:900;">GEFORCE RTX BACKPLATE</div>
+        <svg width="155" height="105" viewBox="0 0 155 105" style="transform:translateZ(8px);filter:drop-shadow(0 12px 20px rgba(0,0,0,0.8));">
+          <!-- Copper Heatpipes -->
+          <rect x="20" y="8" width="110" height="6" rx="3" fill="#ea580c"/>
+          <!-- Shroud Body -->
+          <rect x="8" y="14" width="138" height="74" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="2.5"/>
+          <!-- Dual Axial Fans -->
+          <circle cx="46" cy="51" r="27" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+          <circle cx="46" cy="51" r="8" fill="#10b981"/>
+          <circle cx="108" cy="51" r="27" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+          <circle cx="108" cy="51" r="8" fill="#10b981"/>
+          <!-- PCIe Gold Finger -->
+          <rect x="28" y="88" width="75" height="7" fill="#fbbf24"/>
+          <text x="77" y="25" text-anchor="middle" fill="#6ee7b7" font-size="7" font-weight="900">RTX / RADEON</text>
+        </svg>
+      </div>`,
+    psu: `
+      <div class="hw-3d-root" style="width:135px;height:110px;">
+        <div class="hw-layer-back" style="background:#1e293b;border:2px solid #fbbf24;border-radius:8px;"></div>
+        <svg width="135" height="110" viewBox="0 0 135 110" style="transform:translateZ(8px);filter:drop-shadow(0 10px 18px rgba(0,0,0,0.7));">
+          <rect x="10" y="10" width="115" height="90" rx="6" fill="#0f172a" stroke="#fbbf24" stroke-width="2.5"/>
+          <circle cx="52" cy="55" r="30" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+          <circle cx="52" cy="55" r="18" fill="none" stroke="#475569" stroke-width="1.5"/>
+          <rect x="90" y="22" width="26" height="66" rx="4" fill="#fbbf24"/>
+          <text x="103" y="58" text-anchor="middle" fill="#0f172a" font-size="9" font-weight="900" transform="rotate(-90 103 58)">750W 80+ GOLD</text>
+        </svg>
+      </div>`,
+    cab: `
+      <div class="hw-3d-root" style="width:110px;height:140px;">
+        <div class="hw-layer-back" style="background:#0f172a;border:2px solid #ec4899;border-radius:8px;"></div>
+        <svg width="110" height="140" viewBox="0 0 110 140" style="transform:translateZ(8px);">
+          <rect x="12" y="8" width="86" height="124" rx="6" fill="#090d16" stroke="#38bdf8" stroke-width="2.5"/>
+          <rect x="18" y="16" width="52" height="106" rx="4" fill="#1e293b" stroke="#6366f1"/>
+          <circle cx="84" cy="34" r="10" fill="none" stroke="#ec4899" stroke-width="2.5"/>
+          <circle cx="84" cy="64" r="10" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+          <circle cx="84" cy="94" r="10" fill="none" stroke="#10b981" stroke-width="2.5"/>
+        </svg>
+      </div>`,
+    cool: `
+      <div class="hw-3d-root" style="width:125px;height:125px;">
+        <div class="hw-layer-back" style="background:#334155;border:2px solid #94a3b8;border-radius:10px;"></div>
+        <svg width="125" height="125" viewBox="0 0 125 125" style="transform:translateZ(8px);">
+          <rect x="18" y="14" width="89" height="86" rx="8" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
+          <circle cx="62" cy="57" r="34" fill="#0f172a" stroke="#38bdf8" stroke-width="3"/>
+          <circle cx="62" cy="57" r="11" fill="#0284c7"/>
+          <rect x="38" y="100" width="8" height="18" fill="#ea580c"/><rect x="58" y="100" width="8" height="18" fill="#ea580c"/><rect x="78" y="100" width="8" height="18" fill="#ea580c"/>
+        </svg>
+      </div>`,
+    mon: `
+      <div class="hw-3d-root" style="width:150px;height:115px;">
+        <div class="hw-layer-back" style="background:#0f172a;border:2px solid #38bdf8;border-radius:8px;"></div>
+        <svg width="150" height="115" viewBox="0 0 150 115" style="transform:translateZ(6px);">
+          <rect x="10" y="8" width="130" height="76" rx="6" fill="#1e1b4b" stroke="#38bdf8" stroke-width="3"/>
+          <text x="75" y="48" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="900">180Hz IPS GAMING</text>
+          <rect x="68" y="84" width="14" height="18" fill="#475569"/>
+          <path d="M42 104 L108 104" stroke="#64748b" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+      </div>`
+  };
+  return models[id] || models.cpu;
+}
+
 function calc() {
   let total = 0, watts = 0, stores = {};
   selectedItems = [];
@@ -503,6 +648,11 @@ function calc() {
     }
 
     document.getElementById('pname-' + id).textContent = itemName;
+    const iconBox = document.getElementById('icon-' + id);
+    if (iconBox && iconBox.getAttribute('data-loaded') !== itemName) {
+      iconBox.innerHTML = getRealHardware3D(id, itemName);
+      iconBox.setAttribute('data-loaded', itemName);
+    }
     prevBox.classList.add('active');
     update3DRig(id, true);
 
@@ -551,19 +701,19 @@ function spinIcon(id) {
   if (el) el.classList.toggle('spin360');
 }
 
-// 360° 3D Component Modal Viewer
+// 360° REAL 3D HARDWARE MODAL VIEWER
 let vRX = -12, vRY = 25, vDrag = false, vSX = 0, vSY = 0;
 const vStage = document.getElementById('v-stage');
 const vCube = document.getElementById('v-cube');
 
-function open3DViewer(id, emoji) {
+function open3DViewer(id) {
   const item = selectedItems.find(x => x.id === id);
   if (!item) return;
-  vCube.innerHTML = `${emoji}<span class="holo-label">360° 3D</span>`;
+  vCube.innerHTML = getRealHardware3D(id, item.name);
   document.getElementById('v-name').textContent = item.name;
   document.getElementById('v-price').textContent = `₹${item.price.toLocaleString('en-IN')} (${item.store})`;
-  vRX = -12; vRY = 25;
-  vCube.style.transform = `rotateX(${vRX}deg) rotateY(${vRY}deg)`;
+  vRX = -10; vRY = -22;
+  vCube.style.transform = `scale(1.25) rotateX(${vRX}deg) rotateY(${vRY}deg)`;
   document.getElementById('viewer-modal').classList.add('open');
 }
 function close3DViewer() { document.getElementById('viewer-modal').classList.remove('open'); }
@@ -571,10 +721,10 @@ function close3DViewer() { document.getElementById('viewer-modal').classList.rem
 vStage.addEventListener('pointerdown', e => { vDrag = true; vSX = e.clientX; vSY = e.clientY; });
 window.addEventListener('pointermove', e => {
   if (!vDrag) return;
-  vRY += (e.clientX - vSX) * 0.8;
-  vRX -= (e.clientY - vSY) * 0.6;
+  vRY += (e.clientX - vSX) * 0.85;
+  vRX -= (e.clientY - vSY) * 0.65;
   vSX = e.clientX; vSY = e.clientY;
-  vCube.style.transform = `rotateX(${vRX}deg) rotateY(${vRY}deg)`;
+  vCube.style.transform = `scale(1.25) rotateX(${vRX}deg) rotateY(${vRY}deg)`;
 });
 window.addEventListener('pointerup', () => { vDrag = false; });
 
